@@ -31,7 +31,7 @@ axios.get(endpoint)
     });
 
     // Uložení do souboru
-    fs.writeFile('server/data/FZV_studijni_programy.json', JSON.stringify(structuredData, null, 2), (err) => {
+    fs.writeFile('server/data/FTK/FTK_studijni_programy.json', JSON.stringify(structuredData, null, 2), (err) => {
       if (err) throw err;
       console.log('Data byla úspěšně uložena.');
     });

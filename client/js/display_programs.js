@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function fetchProgramData(faculty) {
-  console.log('Načítání programů pro fakultu:', faculty);  // Přidání logování
+  console.log('Načítání programů pro fakultu:', faculty);
   const fileName = `${faculty}_studijni_programy.json`;
-  const filePath = `/data/${fileName}`;
-  console.log('Načítání souboru:', filePath);  // Přidání logování
+  const filePath = `/data/${faculty}/${fileName}`;
+  console.log('Načítání souboru:', filePath);
 
   fetch(filePath)
     .then(response => {
@@ -26,19 +26,17 @@ function fetchProgramData(faculty) {
       return response.json();
     })
     .then(data => {
-      displayProgramData(data); // Zobrazí data
+      displayProgramData(data, faculty); // Zobrazí data
     })
     .catch(error => {
       console.error('Chyba při načítání dat:', error);
     });
 }
 
-
-function displayProgramData(data) {
+function displayProgramData(data, faculty) {
   const mainContainer = document.getElementById('study-programs');
   mainContainer.innerHTML = ''; // Vyčistíme stávající obsah
 
-  // Funkce pro vytvoření a přidání sekce pro každý typ programu
   const createSectionForType = (type, programs) => {
     const section = document.createElement('section');
     const header = document.createElement('h3');
@@ -55,8 +53,14 @@ function displayProgramData(data) {
         const program = programGroup[id];
         const listItem = document.createElement('li');
         listItem.textContent = program.nazevCz || program.nazev;
+        listItem.setAttribute('data-stprIdno', id); // Přidání ID programu jako data atribut
         listItem.classList.add('bg-blue-100', 'p-2', 'hover:bg-blue-200', 'cursor-pointer');
         programList.appendChild(listItem);
+
+        // Přidání event listeneru pro kliknutí na program
+        listItem.addEventListener('click', () => {
+          window.location.href = `/program_detail.html?stprIdno=${id}&faculty=${faculty}`;
+        });
       }
     }
     section.appendChild(programList);
