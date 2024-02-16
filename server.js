@@ -7,10 +7,9 @@ app.use(express.static(path.join(__dirname, 'client')));
 
 // Endpoint pro JSON data studijních programů pro všechny fakulty
 app.get('/data/:faculty_studijni_programy.json', (req, res) => {
-    const facultyParam = req.params.faculty;
+    const facultyParam = req.params.faculty_studijni_programy.split('_')[0];
     
     if (!facultyParam) {
-        // Pokud facultyParam není definován, odešlete chybu
         return res.status(400).send('Faculty parameter is missing in the request');
     }
     
@@ -19,7 +18,6 @@ app.get('/data/:faculty_studijni_programy.json', (req, res) => {
     
     res.sendFile(filePath, function(err) {
         if (err) {
-            // Pokud dojde k chybě, jako je soubor nenalezen, odešlete chybu 404
             return res.status(404).send('Nelze najít soubor: ' + filePath);
         }
     });
