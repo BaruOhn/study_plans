@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Studijního Programu</title>
+    <title>Studijní plán</title>
     <link href="css/styles.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 font-sans leading-normal">
+<body class="font-sans">
     <header>
         <nav class="font-bold bg-nav-blue h-16">
             <ul class="flex justify-center items-center text-white h-full">
@@ -26,25 +26,17 @@
                 </li>
             </ul>
         </nav>
+        <h2 class="text-sky-700 font-bold text-2xl mx-7 mt-7">Informační technologie - studijní plán</h2>
+        <span class="text-gray-500 mx-7">bakalářský program</span>
     </header>
 
-    <div class="container mx-auto p-8">
-        <div class="bg-white rounded shadow p-6">
-            <h2 id="program-nazev"class="text-sky-700 font-bold text-2xl mx-7 mt-7">Detail Studijního Programu</h2>
-            <div id="program-detail" class="space-y-3">
-                <!-- Dynamicky načtené informace o programu se zobrazí zde -->
-            </div>
-            <div id="obory-list" class="mt-6">
-                <h2 class="text-xl font-semibold mb-2">Seznam Oborů</h2>
-                <ul id="obor-list-ul" class="list-disc list-inside">
-                    <!-- Dynamicky načtený seznam oborů se zobrazí zde -->
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <script src="js/display_program_detail.js"></script>
-
+    <main class="mx-5 flex flex-wrap justify-between">
+        <!-- Dynamicky generované sekce pro každý ročník a semestr -->
+    </main>
+    <footer class="text-center p-2 mt-6 bg-nav-blue text-white">
+        <p>&copy; 2024</p>
+    </footer>
+    <script src="js/display_study_plan.js"></script>
 </body>
 
 </html>

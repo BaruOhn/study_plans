@@ -1,12 +1,14 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const app = express();
 const port = 3000;
 
+// Nastavení cesty pro statické soubory
 app.use(express.static(path.join(__dirname, 'client')));
 
-// Endpoint pro JSON data studijních programů pro všechny fakulty
-app.get('/data/:faculty_studijni_programy.json', (req, res) => {
+// Endpoint pro získání dat studijních programů
+app.get('/data/:faculty/:faculty_studijni_programy.json', (req, res) => {
     const facultyParam = req.params.faculty_studijni_programy.split('_')[0];
     
     if (!facultyParam) {
@@ -14,7 +16,7 @@ app.get('/data/:faculty_studijni_programy.json', (req, res) => {
     }
     
     const faculty = facultyParam.toUpperCase();
-    const filePath = path.join(__dirname, 'server/data', `${faculty}_studijni_programy.json`);
+    const filePath = path.join(__dirname, `server/data/${faculty}`, `${faculty}_studijni_programy.json`);
     
     res.sendFile(filePath, function(err) {
         if (err) {
@@ -23,10 +25,38 @@ app.get('/data/:faculty_studijni_programy.json', (req, res) => {
     });
 });
 
+// Endpoint pro získání detailů studijního programu
+app.get('/data/:faculty/obory/:stprIdno', (req, res) => {
+    const faculty = req.params.faculty;
+    const stprIdno = req.params.stprIdno;
+    const filePath = path.join(__dirname, `server/data/${faculty}/obory`, `${stprIdno}_obory.json`);
+    
+    res.sendFile(filePath, function(err) {
+        if (err) {
+            return res.status(404).send('Nelze najít soubor: ' + filePath);
+        }
+    });
+});
+
+// Endpoint pro získání studijního plánu
+app.get('/data/:faculty/studijni_plany/:oborIdno', (req, res) => {
+    const faculty = req.params.faculty;
+    const oborIdno = req.params.oborIdno;
+    const filePath = path.join(__dirname, `server/data/${faculty}/studijni_plany`, `${oborIdno}_studijni_plan.json`);
+    
+    res.sendFile(filePath, function(err) {
+        if (err) {
+            return res.status(404).send('Nelze najít soubor: ' + filePath);
+        }
+    });
+});
+
+// Endpoint pro default stránku
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'client/index.html'));
 });
 
+// Spuštění serveru
 app.listen(port, () => {
     console.log(`Server běží na http://localhost:${port}`);
 });
