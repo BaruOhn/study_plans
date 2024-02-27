@@ -29,25 +29,24 @@ function fetchProgramDetail(faculty, stprIdno) {
 }
 
 function displayData(data, faculty, stprIdno) {
-  const programDetailDiv = document.getElementById('program-detail');
   const oborListUl = document.getElementById('obor-list-ul');
 
   data.oborInfo.forEach(obor => {
-    const oborDetail = document.createElement('p');
-    oborDetail.classList.add('mt-5');
-    oborDetail.innerHTML = `
-          <p>${obor.anotaceCz}</p>
-    `;
-
-    programDetailDiv.appendChild(oborDetail);
+    // Vytvoření elementu li pro obor
     const oborItem = document.createElement('li');
     oborItem.classList.add('mb-2');
+
+    // Vložení názvu oboru, anotace a odkazu na studijní plán do elementu li
     oborItem.innerHTML = `
-          <p class="font-semibold">${obor.nazevCz}</p>
-          <p class="text-sm text-gray-600 my-2">Typ - ${obor.typ}</p>
-          <a href="study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}">Studijní plán</a>
-      `;
+        <p class="font-semibold">${obor.nazevCz}</p>
+        <p>${obor.anotaceCz}</p>
+        <p class="text-sm text-gray-600 my-2">Typ - ${obor.typ}</p>
+        <a href="study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}">Studijní plán</a>
+    `;
+
+    // Přidání elementu li do ul
     oborListUl.appendChild(oborItem);
   });
 }
+
 

@@ -5,4 +5,5 @@
 /postcss.config.js
 server/data/PRF/obory
 server/data/PRF/studijni_plany
+server/data/PRF/predmety
 server.js
