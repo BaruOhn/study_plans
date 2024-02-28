@@ -6,42 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Studijního Programu</title>
     <link href="css/styles.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 font-sans leading-normal">
+<body class="font-sans leading-normal">
     <header>
-        <nav class="font-bold bg-nav-blue h-16">
-            <ul class="flex justify-center items-center text-white h-full">
-                <li class="group relative hover:bg-nav-active h-full w-48 text-center">
-                    <a href="#" class="flex px-4 w-48 h-full items-center justify-center">Fakulty</a>
-                    <ul class=" hidden group-hover:block bg-nav-blue font-light text-base font-sans w-48 top-full">
-                        <li><a href="#" data-faculty="PRF" class="block p-4 hover:bg-nav-active text-left">Přírodovědecká fakulta</a></li>
-                        <!-- <li><a href="#" data-faculty="PDF" class="block p-4 hover:bg-nav-active text-left">Pedagogická fakulta</a></li>
-                        <li><a href="#" data-faculty="FTK" class="block p-4 hover:bg-nav-active text-left">Fakulta tělesné kultury</a></li>
-                        <li><a href="#" data-faculty="FZV" class="block p-4 hover:bg-nav-active text-left">Fakulta zdravotních věd</a></li> -->
-                    </ul>
-                </li>
-                <li class="px-4 hover:bg-nav-active h-full w-48 text-center">
-                    <a href="#" class="flex h-full items-center justify-center">Hledat</a>
-                </li>
-            </ul>
-        </nav>
+        <h2 id="program-nazev" class="text-custom-gray font-bold text-3xl mx-8 mt-12">Detail Studijního Programu</h2>
+        <h3 class="text-2xl font-semibold text-sky-700 ml-8 mt-8">Seznam Oborů</h3>
     </header>
 
-    <div class="container mx-auto p-8">
-        <div class="bg-white rounded shadow p-6">
-            <h2 id="program-nazev"class="text-sky-700 font-bold text-2xl mt-7">Detail Studijního Programu</h2>
-            <div id="program-detail" class="space-y-3">
-                <!-- Dynamicky načtené informace o programu se zobrazí zde -->
-            </div>
-            <div id="obory-list" class="mt-6">
-                <h2 class="text-xl font-semibold mb-2">Seznam Oborů</h2>
-                <ul id="obor-list-ul" class="list-inside list-none">
-                    <!-- Dynamicky načtený seznam oborů se zobrazí zde -->
-                </ul>
-            </div>
-        </div>
+    <div id="obory-list">
+        <ul id="obor-list-ul" class="list-inside list-none m-4">
+            <!-- Dynamicky načtený seznam oborů se zobrazí zde -->
+        </ul>
     </div>
 
     <script src="js/display_program_detail.js"></script>

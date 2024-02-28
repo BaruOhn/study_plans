@@ -32,20 +32,36 @@ function displayData(data, faculty, stprIdno) {
   const oborListUl = document.getElementById('obor-list-ul');
 
   data.oborInfo.forEach(obor => {
-    // Vytvoření elementu li pro obor
-    const oborItem = document.createElement('li');
-    oborItem.classList.add('mb-2');
+    // Create the card container for the study field
+    const card = document.createElement('div');
+    card.className = 'bg-white border border-solid border-gray-300 shadow-md mb-4 p-4 transition-shadow hover:shadow-lg';
 
-    // Vložení názvu oboru, anotace a odkazu na studijní plán do elementu li
-    oborItem.innerHTML = `
-        <p class="font-semibold">${obor.nazevCz}</p>
-        <p>${obor.anotaceCz}</p>
-        <p class="text-sm text-gray-600 my-2">Typ - ${obor.typ}</p>
-        <a href="study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}">Studijní plán</a>
+    // Create the card header
+    const cardHeader = document.createElement('div');
+    cardHeader.className = 'text-gray-700 text-lg p-2 font-bold';
+    cardHeader.textContent = obor.nazevCz;
+
+    // Create the card body
+    const cardBody = document.createElement('div');
+    cardBody.className = 'p-2';
+    cardBody.innerHTML = `
+        <p class="text-sm text-gray-600">${obor.forma} forma</p>
+        <p class="mb-2">${obor.anotaceCz}</p>
     `;
 
-    // Přidání elementu li do ul
-    oborListUl.appendChild(oborItem);
+    // Create the link
+    const cardLink = document.createElement('a');
+    cardLink.className = 'text-blue-700 hover:text-blue-800 no-underline';
+    cardLink.setAttribute('href', `study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}`);
+    cardLink.textContent = 'Studijní plán';
+
+    // Append the header and body to the card
+    card.appendChild(cardHeader);
+    card.appendChild(cardBody);
+    card.appendChild(cardLink);
+
+    // Append the card to the list
+    oborListUl.appendChild(card);
   });
 }
 
