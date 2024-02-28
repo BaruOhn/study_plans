@@ -10,10 +10,6 @@ module.exports = {
         'nav-blue': '#016BAB',
         'nav-active': '#07467B',
         'custom-gray': '#4B4B4B',
-        /** bg-blue-400/50 */
-        /** bg-red-400/50 */
-        /** bg-amber-400/50 */
-        /** bg-lime-400/50 */
       },
       fontFamily: {
         'sans': ['IBM\\ Plex\\ Sans', 'sans-serif', ...defaultTheme.fontFamily.sans],

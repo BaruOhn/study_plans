@@ -1,16 +1,29 @@
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Studijního Programu</title>
     <link href="css/styles.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
-<body class="font-sans">
-    <h2>Detail Studijního Programu</h2>
-    <div id="program-detail"></div>
-    
+
+<body class="font-sans leading-normal">
+    <header>
+        <h2 id="program-nazev" class="text-custom-gray font-bold text-2xl mx-8 mt-12 mb-6">Detail Studijního Programu</h2>
+        <h3 class="text-xl font-semibold text-sky-700 ml-8 mb-6">Seznam Oborů</h3>
+    </header>
+
+    <section id="obory-list">
+        <ul id="obor-list-ul" class="list-inside list-none px-4 pb-12">
+            <!-- Dynamicky načtený seznam oborů se zobrazí zde -->
+        </ul>
+    </section>
 
     <script src="js/display_program_detail.js"></script>
+
 </body>
+
 </html>

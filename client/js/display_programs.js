@@ -13,10 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function fetchProgramData(faculty) {
-  console.log('Načítání programů pro fakultu:', faculty);
   const fileName = `${faculty}_studijni_programy.json`;
   const filePath = `/data/${faculty}/${fileName}`;
-  console.log('Načítání souboru:', filePath);
 
   fetch(filePath)
     .then(response => {
@@ -41,11 +39,11 @@ function displayProgramData(data, faculty) {
     const section = document.createElement('section');
     const header = document.createElement('h3');
     header.textContent = type + ' programy';
-    header.classList.add('text-xl', 'font-semibold', 'text-sky-700', 'mb-4');
+    header.classList.add('text-xl', 'font-semibold', 'text-sky-700', 'mb-4', 'ml-4');
     section.appendChild(header);
 
     const programList = document.createElement('ul');
-    programList.classList.add('list-disc', 'list-inside', 'p-2');
+    programList.classList.add('list-none', 'list-inside', 'p-2', 'ml-2');
 
     for (const programName in programs) {
       const programGroup = programs[programName];
@@ -54,7 +52,7 @@ function displayProgramData(data, faculty) {
         const listItem = document.createElement('li');
         listItem.textContent = program.nazevCz || program.nazev;
         listItem.setAttribute('data-stprIdno', id); // Přidání ID programu jako data atribut
-        listItem.classList.add('bg-blue-100', 'p-2', 'hover:bg-blue-200', 'cursor-pointer');
+        listItem.classList.add('p-2', 'hover:bg-blue-200', 'cursor-pointer');
         programList.appendChild(listItem);
 
         // Přidání event listeneru pro kliknutí na program

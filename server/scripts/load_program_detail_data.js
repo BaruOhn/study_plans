@@ -13,7 +13,7 @@ async function fetchProgramDetails(faculty) {
               for (const programId in program) {
                 const stprIdno = program[programId].stprIdno;
                 if (stprIdno) {
-                  await fetchAndSaveProgramDetails(faculty, stprIdno);
+                  await saveProgramDetails(faculty, stprIdno);
                 } else {
                   console.error(`stprIdno nebylo nalezeno pro program: ${programName}`);
                 }
@@ -26,7 +26,7 @@ async function fetchProgramDetails(faculty) {
     }
 }
 
-async function fetchAndSaveProgramDetails(faculty, stprIdno) {
+async function saveProgramDetails(faculty, stprIdno) {
     const apiUrl = `https://stagservices.upol.cz/ws/services/rest2/programy/getOboryStudijnihoProgramu?outputFormat=JSON&stprIdno=${stprIdno}`;
     try {
         const response = await axios.get(apiUrl);
@@ -40,7 +40,4 @@ async function fetchAndSaveProgramDetails(faculty, stprIdno) {
 }
 
 // Volání funkce pro načtení detailů programů pro fakultu
-fetchProgramDetails('FZV'); // Přírodovědecká fakulta
-// fetchProgramDetails('PDF'); // Pedagogická fakulta
-// fetchProgramDetails('FTK'); // Fakulta tělesné kultury
-// fetchProgramDetails('FZV'); // Fakulta zdravotnických věd
+fetchProgramDetails('PRF'); // Přírodovědecká fakulta
