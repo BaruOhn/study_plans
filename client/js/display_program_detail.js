@@ -32,35 +32,45 @@ function displayData(data, faculty, stprIdno) {
   const oborListUl = document.getElementById('obor-list-ul');
 
   data.oborInfo.forEach(obor => {
-    // Create the card container for the study field
-    const card = document.createElement('div');
-    card.className = 'bg-white border border-solid border-gray-300 shadow-md mb-4 p-4 transition-shadow hover:shadow-lg';
+    // Create the card box
+    const card = document.createElement('article');
+    card.className = 'items-center border border-t-0 border-solid border-gray-300 rounded-t-none rounded-b mx-4 mb-8 p-3 shadow-md transition-shadow';
+
+
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'flex flex-wrap justify-between items-center';
 
     // Create the card header
     const cardHeader = document.createElement('div');
-    cardHeader.className = 'text-gray-700 text-lg p-2 font-bold';
-    cardHeader.textContent = obor.nazevCz;
+    cardHeader.className = 'text-gray-700 text-lg m-2 font-bold';
+    cardHeader.innerHTML = `
+        <h4 class="text-lg font-bold">${obor.nazevCz}</h4>
+        <span class="text-sm text-gray-600">${obor.forma} forma</span>
+    `;
 
     // Create the card body
-    const cardBody = document.createElement('div');
-    cardBody.className = 'p-2';
-    cardBody.innerHTML = `
-        <p class="text-sm text-gray-600">${obor.forma} forma</p>
-        <p class="mb-2">${obor.anotaceCz}</p>
-    `;
+    const cardBody = document.createElement('p');
+    cardBody.className = 'p-2 hidden sm:block';
+    cardBody.textContent = `${obor.anotaceCz}`;
 
     // Create the link
     const cardLink = document.createElement('a');
-    cardLink.className = 'text-blue-700 hover:text-blue-800 no-underline';
+    cardLink.className = 'bg-sky-700/80 hover:bg-sky-700 text-white no-underline rounded p-3 m-2';
     cardLink.setAttribute('href', `study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}`);
     cardLink.textContent = 'Studijní plán';
 
+    // Create the border
+    const border = document.createElement('div');
+    border.className = 'bg-sky-700 h-2 mx-4 rounded-t rounded-b-none';
+
     // Append the header and body to the card
-    card.appendChild(cardHeader);
+    cardDiv.appendChild(cardHeader);
+    cardDiv.appendChild(cardLink); 
+    card.appendChild(cardDiv);
     card.appendChild(cardBody);
-    card.appendChild(cardLink);
 
     // Append the card to the list
+    oborListUl.appendChild(border);
     oborListUl.appendChild(card);
   });
 }
