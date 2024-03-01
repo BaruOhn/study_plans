@@ -34,8 +34,7 @@ function displayData(data, faculty, stprIdno) {
   data.oborInfo.forEach(obor => {
     // Create the card box
     const card = document.createElement('article');
-    card.className = 'items-center border border-t-0 border-solid border-gray-300 rounded-t-none rounded-b mx-4 mb-8 p-3 shadow-md transition-shadow';
-
+    card.className = 'items-center border border-t-0 border-solid border-gray-300 rounded-t-none rounded-b mx-4 mb-8 p-3 shadow-md hover:shadow-lg transition-shadow';
 
     const cardDiv = document.createElement('div');
     cardDiv.className = 'flex flex-wrap justify-between items-center';
@@ -55,13 +54,13 @@ function displayData(data, faculty, stprIdno) {
 
     // Create the link
     const cardLink = document.createElement('a');
-    cardLink.className = 'bg-sky-700/80 hover:bg-sky-700 text-white no-underline rounded p-3 m-2';
+    cardLink.className = 'bg-amber-500/90 text-white no-underline rounded p-3 m-2 transition-shadow hover:shadow-md hover:bg-amber-500';
     cardLink.setAttribute('href', `study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}`);
     cardLink.textContent = 'Studijní plán';
 
     // Create the border
     const border = document.createElement('div');
-    border.className = 'bg-sky-700 h-2 mx-4 rounded-t rounded-b-none';
+    border.className = 'bg-sky-700/90 h-2 mx-4 rounded-t rounded-b-none';
 
     // Append the header and body to the card
     cardDiv.appendChild(cardHeader);
