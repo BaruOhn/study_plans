@@ -6,18 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Studijní plány</title>
     <link href="css/styles.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/94bfb75d9d.js" crossorigin="anonymous"></script>
 </head>
 
-<body class="font-sans bg-bg-gray-light">
-    <header class="bg-sky-700 px-7 md:px-10 py-6 md:py-12">
+<body class="bg-bg-gray-light">
+    <header class="bg-sky-700 px-7 py-6 md:px-10 md:py-12">
+
+        <!-- Navigace -->
         <div class="flex justify-between items-center">
-            <h1 class="font-bold text-xl md:text-2xl hover:text-gray-300 whitespace-pre-line text-white"><a href="index.html">STUDIJNÍ
-                 PLÁNY</a></h1>
-            <button id="menu-btn" class="text-white text-3xl sm:hidden">
-                ☰
-            </button>
+            <h1 class="text-white hover:text-gray-300 font-bold text-xl md:text-2xl whitespace-pre-line "><a href="index.html">STUDIJNÍ
+                    PLÁNY</a>
+            </h1>
+            <button id="menu-btn" class="text-white text-3xl sm:hidden">☰</button>
             <ul id="menu" class="hidden sm:flex space-x-5">
                 <li class="filter-btn cursor-pointer text-white hover:text-gray-300" data-filter="all">VŠE</li>
                 <li class="filter-btn cursor-pointer text-white hover:text-gray-300" data-filter="bakalarske">BAKALÁŘSKÉ</li>
@@ -25,8 +26,9 @@
                 <li class="filter-btn cursor-pointer text-white hover:text-gray-300" data-filter="doktorske">DOKTORSKÉ</li>
             </ul>
         </div>
+
         <!-- Mobilní menu -->
-        <ul id="mobile-menu" class="hidden sm:hidden bg-sky-700 w-full pt-4">
+        <ul id="mobile-menu" class="sm:hidden bg-sky-700 w-full pt-4">
             <li class="block py-2 text-white hover:text-gray-300" data-filter="all">VŠE</li>
             <li class="block py-2 text-white hover:text-gray-300" data-filter="bakalarske">BAKALÁŘSKÉ</li>
             <li class="block py-2 text-white hover:text-gray-300" data-filter="navazujici">NAVAZUJÍCÍ</li>
@@ -37,17 +39,18 @@
     <main>
         <!-- Sekce pro vyhledávání -->
         <section class="bg-sky-700 pb-20">
-            <h2 class="font-semibold text-4xl md:text-5xl lg:text-6xl text-center text-white px-4 pt-6 pb-12 md:px-8 md:py-12 lg:pt-36 lg:pb-16 ">Přehled nabídky studia</h2>
-            <div class="flex justify-center pb-20 lg:pb-40 px-4 sm:px-0 ">
-                <form class="flex flex-col sm:flex-row justify-center w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
-                    <input type="search" name="search" placeholder="Vyhledat studijní program..." class="w-full px-3 py-4 rounded-xl focus:outline-none text-gray-700 mb-4 sm:mb-0 sm:mr-4">
-                    <button type="submit" class="px-6 py-2 text-white font-bold bg-amber-500 rounded-xl hover:bg-amber-600 focus:outline-none">Hledat</button>
+            <h2 class="text-white font-semibold text-center text-4xl md:text-5xl lg:text-6xl px-4 pt-20 pb-16 md:px-8 md:pt-24 md:pb-16 lg:pt-36 lg:pb-16">Přehled nabídky studia</h2>
+            <div class="flex justify-center pb-20 px-4 lg:pb-40 sm:px-0 ">
+                <form class="flex flex-col justify-center sm:flex-row w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+                    <input type="search" name="search" placeholder="Vyhledat studijní program..." class="text-gray-700 w-full rounded-xl focus:outline-none px-3 py-4 mb-4 sm:mb-0 sm:mr-4">
+                    <button type="submit" class="text-white font-bold bg-amber-500 hover:bg-amber-600 rounded-xl focus:outline-none px-6 py-2">Hledat</button>
                 </form>
             </div>
         </section>
-        
+
         <!-- Sekce pro zobrazení studijních programů -->
-        <section id="study-programs" class="relative mt-[-100px] w-full md:max-w-3xl lg:max-w-5xl xl:max-w-7xl mx-auto px-4">
+        <section id="study-programs"
+            class="relative mt-[-100px] w-full md:max-w-3xl lg:max-w-5xl xl:max-w-7xl mx-auto px-4">
         </section>
     </main>
 </body>

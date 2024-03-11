@@ -5,7 +5,7 @@ const path = require('path');
 const subjectsDirPath = path.join (__dirname, '..', 'data', 'PRF', 'predmety');
 const studyPlansDirPath = path.join (__dirname, '..', 'data', 'PRF', 'studijni_plany');
 
-
+// Načte data pro všechny předměty z jednotlivých studijních plánů a uloží je do souborů
 async function loadSubjectData() {
   try {
     const studyPlansFiles = fs.readdirSync(studyPlansDirPath);

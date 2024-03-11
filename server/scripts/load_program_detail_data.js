@@ -2,6 +2,7 @@ const fs = require('fs').promises;
 const axios = require('axios');
 const path = require('path');
 
+// Funkce pro načtení oborů studijních programů
 async function fetchProgramDetails(faculty) {
     const facultyDataPath = path.join(__dirname, '..', 'data', faculty, `${faculty}_studijni_programy.json`);
     try {
@@ -26,6 +27,7 @@ async function fetchProgramDetails(faculty) {
     }
 }
 
+// Funkce pro uložení seznamu oborů studijních programů
 async function saveProgramDetails(faculty, stprIdno) {
     const apiUrl = `https://stagservices.upol.cz/ws/services/rest2/programy/getOboryStudijnihoProgramu?outputFormat=JSON&stprIdno=${stprIdno}`;
     try {
@@ -39,5 +41,4 @@ async function saveProgramDetails(faculty, stprIdno) {
     }
 }
 
-// Volání funkce pro načtení detailů programů pro fakultu
-fetchProgramDetails('PRF'); // Přírodovědecká fakulta
+fetchProgramDetails('PRF'); 

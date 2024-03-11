@@ -5,9 +5,6 @@ const axios = require('axios');
 const oboryDir = path.join(__dirname, '..', 'data', 'PRF', 'obory');
 const studijniPlanyDir = path.join(__dirname, '..', 'data', 'PRF', 'studijni_plany');
 
-console.log(`oboryDir: ${oboryDir}`);
-console.log(`studijniPlanyDir: ${studijniPlanyDir}`);
-
 async function loadAndSaveOborData() {
   try {
     const files = await fs.readdir(oboryDir);
@@ -30,10 +27,10 @@ async function loadAndSaveOborData() {
         }
 
         const oborIdno = oborItem.oborIdno;
-        const url = `https://stagservices.upol.cz/ws/services/rest2/predmety/getPredmetyByObor?oborIdno=${oborIdno}&outputFormat=JSON`;
+        const apiUrl = `https://stagservices.upol.cz/ws/services/rest2/predmety/getPredmetyByObor?oborIdno=${oborIdno}&outputFormat=JSON`;
 
         // Fetch the data from the endpoint
-        const response = await axios.get(url);
+        const response = await axios.get(apiUrl);
 
         // Construct the file path for saving the data
         const savePath = path.join(studijniPlanyDir, `${oborIdno}_studijni_plan.json`);
