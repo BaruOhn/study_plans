@@ -1,22 +1,12 @@
 let currentFilter = 'all'; // Proměnná pro filtr programů podle typu programu
 
 document.addEventListener('DOMContentLoaded', () => {
-  setupFacultyButtons();
   setupSearchForm();
-  setupFilterButtons();
+  setupFilterTypeButtons();
   setupMobileMenu();
   setupMobileMenuItems();
   fetchProgramData('PRF'); // Počáteční načtení dat
 });
-
-function setupFacultyButtons() {
-  document.querySelectorAll('[data-faculty]').forEach(item => {
-    item.addEventListener('click', (e) => {
-      e.preventDefault();
-      fetchProgramData(item.getAttribute('data-faculty'));
-    });
-  });
-}
 
 function setupSearchForm() {
   document.querySelector('form').addEventListener('submit', (e) => {
@@ -26,13 +16,9 @@ function setupSearchForm() {
   });
 }
 
-function setupFilterButtons() {
+function setupFilterTypeButtons() {
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function () {
-      document.querySelectorAll('.filter-btn').forEach(innerBtn => {
-        innerBtn.classList.remove('font-bold');
-      });
-      this.classList.add('font-bold');
       currentFilter = this.getAttribute('data-filter');
       fetchProgramData('PRF'); // Znovu načteme data a aplikujeme filtr
     });
@@ -40,7 +26,6 @@ function setupFilterButtons() {
 }
 
 function setupMobileMenu() {
-  // JavaScript pro ovládání mobilního menu
   document.getElementById('menu-btn').addEventListener('click', function () {
     var menu = document.getElementById('mobile-menu');
     if (menu.classList.contains('hidden')) {
@@ -73,21 +58,54 @@ function fetchProgramData(faculty, searchQuery = '') {
 function filterPrograms(data, query) {
   return Object.fromEntries(Object.entries(data).map(([programType, programs]) => [
     programType,
-    Object.fromEntries(Object.entries(programs).filter(([programName, programGroup]) =>
-      programName.toLowerCase().includes(query.toLowerCase()) ||
-      Object.values(programGroup).some(program =>
-        program.nazevCz.toLowerCase().includes(query.toLowerCase()) ||
-        program.nazev.toLowerCase().includes(query.toLowerCase())
-      )
-    ))
+    Object.fromEntries(Object.entries(programs).filter(([programName, programGroup]) => {
+      const nameWords = programName.toLowerCase().split(' ');
+      const queryWords = query.toLowerCase().split(' ');
+
+      const minDistance = nameWords.reduce((min, nameWord) => {
+        const distances = queryWords.map(queryWord =>
+          getLevenshteinDistance(queryWord, nameWord)
+        );
+        return Math.min(min, ...distances);
+      }, Infinity);
+
+      // Pokud je vzdálenost menší nebo rovna 5, program se zobrazí
+      const maxDistance = 3;
+
+      return minDistance <= maxDistance;
+    }))
   ]));
+}
+
+function getLevenshteinDistance(a, b) {
+  const m = a.length;
+  const n = b.length;
+  const dp = [];
+
+  // Inicializace DP tabulky
+  for (let i = 0; i <= m; i++) {
+    dp[i] = [];
+    for (let j = 0; j <= n; j++) {
+      dp[i][j] = Math.max(i, j);
+    }
+  }
+
+  // Výpočet vzdálenosti
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + (a[i - 1] !== b[j - 1]));
+    }
+  }
+
+  // Výsledek (vzdálenost) je v pravém dolním rohu tabulky 
+  return dp[m][n];
 }
 
 function displayProgramData(data, faculty) {
   const programsContainer = document.getElementById('study-programs');
   programsContainer.innerHTML = '';
-  let hasPrograms = false;
 
+  let hasPrograms = false;
   ['bakalářský', 'navazující', 'doktorský'].forEach((programType, index) => {
     const filterMapping = { 'bakalářský': 'bakalarske', 'navazující': 'navazujici', 'doktorský': 'doktorske' };
     if (currentFilter === 'all' || currentFilter === filterMapping[programType]) {
@@ -97,13 +115,6 @@ function displayProgramData(data, faculty) {
       }
     }
   });
-
-  if (!hasPrograms) {
-    const errorMessage = document.createElement('p');
-    errorMessage.textContent = 'Nebyly nalezeny žádné programy odpovídající zadanému výrazu.';
-    errorMessage.classList.add('text-gray-700', 'text-lg', 'font-normal', 'text-center', 'mt-4');
-    programsContainer.appendChild(errorMessage);
-  }
 }
 
 function createCardForProgramType(container, programs, type, faculty) {
@@ -118,13 +129,23 @@ function createCardForProgramType(container, programs, type, faculty) {
   card.classList.add('bg-white', 'shadow-lg', 'rounded-xl', 'p-6', 'mb-4', 'overflow-hidden', 'animate-pop-in');
 
   // Použití mapování pro zobrazení správného českého názvu
-  const typeName = typeMapping[type] || type; // Bezpečnostní kontrola, pokud typ není v mapování
+  const typeName = typeMapping[type] || type;
   card.innerHTML = `<h3 class="text-xl font-semibold text-gray-800 mb-4">${typeName} programy</h3>`;
 
   const table = createTableForPrograms(programs, faculty);
-  card.appendChild(table);
-  container.appendChild(card);
+
+  // Pokud nejsou nalezeny žádné programy, zobrazíme chybovou zprávu
+  if (table.querySelector('tbody tr') !== null) {
+    card.appendChild(table);
+    container.appendChild(card);
+  }
+  else {
+    card.innerHTML = `<h3 class="text-xl font-semibold text-gray-800 mb-4">${typeName} programy</h3>
+                      <p class="text-gray-700 text-lg font-normal text-center mt-4 pb-2">Nebyly nalezeny žádné programy odpovídající zadanému výrazu.</p>`;
+    container.appendChild(card);
+  }
 }
+
 
 function createTableForPrograms(programs, faculty) {
   let table = document.createElement('table');
@@ -132,11 +153,11 @@ function createTableForPrograms(programs, faculty) {
   table.innerHTML = `
     <thead>
       <tr class="text-left">
-        <th class="p-2 border-b border-gray-200 text-gray-600 font-bold">Název</th>
-        <th class="p-2 border-b border-gray-200 text-gray-600 font-bold">Forma</th>
-        <th class="p-2 border-b border-gray-200 text-gray-600 font-bold hidden md:table-cell">Garant</th>
-        <th class="p-2 border-b border-gray-200 text-gray-600 font-bold hidden md:table-cell">Jazyk</th>
-        <th class="p-2 border-b border-gray-200 text-gray-600 font-bold hidden md:table-cell">Platný od</th>
+        <th class="text-gray-700 border-b font-bold p-3">Název</th>
+        <th class="text-gray-700 border-b font-bold p-3">Forma</th>
+        <th class="text-gray-700 border-b font-bold p-3 hidden md:table-cell">Garant</th>
+        <th class="text-gray-700 border-b font-bold p-3 hidden md:table-cell">Jazyk</th>
+        <th class="text-gray-700 border-b font-bold p-3 hidden md:table-cell">Platný od</th>
       </tr>
     </thead>`;
   const tbody = document.createElement('tbody');
@@ -144,11 +165,11 @@ function createTableForPrograms(programs, faculty) {
     Object.entries(programGroup).forEach(([id, program]) => {
       const row = tbody.insertRow();
       row.innerHTML = `
-        <td class="p-2 border-b border-gray-200 text-gray-700 max-w-xs">${program.nazevCz || program.nazev}</td>
-        <td class="p-2 border-b border-gray-200 text-gray-700">${program.forma}</td>
-        <td class="p-2 border-b border-gray-200 text-gray-700 hidden md:table-cell">${program.garant || '-'}</td>
-        <td class="p-2 border-b border-gray-200 text-gray-700 hidden md:table-cell">${program.jazyk}</td>
-        <td class="p-2 border-b border-gray-200 text-gray-700 hidden md:table-cell">${program.platnyOd}</td>`;
+        <td class="text-gray-700 border-b border-gray-200 p-3 max-w-40 font-bold">${program.nazevCz || program.nazev}</td>
+        <td class="text-gray-600 border-b border-gray-200 p-3 max-w-40">${program.forma}</td>
+        <td class="text-gray-600 border-b border-gray-200 p-3 hidden max-w-40 md:table-cell">${program.garant || '-'}</td>
+        <td class="text-gray-600 border-b border-gray-200 p-3 hidden max-w-40 md:table-cell">${program.jazyk}</td>
+        <td class="text-gray-600 border-b border-gray-200 p-3 hidden max-w-40 md:table-cell">${program.platnyOd}</td>`;
       row.classList.add('cursor-pointer', 'hover:bg-gray-100');
       row.addEventListener('click', () => {
         window.location.href = `/program_detail.html?stprIdno=${id}&faculty=${faculty}`;

@@ -29,12 +29,14 @@ function fetchProgramDetail(faculty, stprIdno) {
 }
 
 function displayData(data, faculty, stprIdno) {
-  const oborListUl = document.getElementById('obor-list-ul');
+  const oborListUl = document.getElementById('obor-seznam');
 
   data.oborInfo.forEach(obor => {
-    // Create the card box
-    const card = document.createElement('article');
-    card.className = 'items-center border border-t-0 border-solid border-gray-300 rounded-t-none rounded-b mx-4 mb-8 p-3 shadow-md hover:shadow-lg transition-shadow';
+    const card = document.createElement('a'); // Změna na <a> element
+    card.href = `study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}`; // Přidání odkazu na celou kartu
+    card.className = 'items-center border border-t-0 border-solid border-gray-300 rounded-t-none rounded-b mb-8 p-3 w-full max-w-xs sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-6xl 2xl:max-w-7xl shadow-md hover:shadow-lg transition-shadow';
+    card.addEventListener('mouseenter', () => { card.classList.add('shadow-lg') });
+    card.addEventListener('mouseleave', () => { card.classList.remove('shadow-lg') });
 
     const cardDiv = document.createElement('div');
     cardDiv.className = 'flex flex-wrap justify-between items-center';
@@ -58,13 +60,12 @@ function displayData(data, faculty, stprIdno) {
     cardLink.setAttribute('href', `study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}`);
     cardLink.textContent = 'Studijní plán';
 
-    // Create the border
     const border = document.createElement('div');
-    border.className = 'bg-sky-700/90 h-2 mx-4 rounded-t rounded-b-none';
+    border.className = 'bg-sky-700/90 h-2 w-full max-w-xs sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-6xl 2xl:max-w-7xl rounded-t rounded-b-none mx-auto';
 
-    // Append the header and body to the card
+    // Append the header, link and body to the card
     cardDiv.appendChild(cardHeader);
-    cardDiv.appendChild(cardLink); 
+    cardDiv.appendChild(cardLink);
     card.appendChild(cardDiv);
     card.appendChild(cardBody);
 
@@ -73,5 +74,4 @@ function displayData(data, faculty, stprIdno) {
     oborListUl.appendChild(card);
   });
 }
-
 

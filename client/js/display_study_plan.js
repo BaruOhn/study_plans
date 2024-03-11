@@ -39,7 +39,7 @@ async function fetchProgramDetail(faculty, oborIdno, stprIdno) {
     }
 
     const data = await fetchData(studyPlanPath);
-    displayData(data);
+    displayData(data, faculty);
 }
 
 async function fetchData(path) {
@@ -51,7 +51,8 @@ async function fetchData(path) {
 function updatePageHeader(obor) {
     const headerTitle = document.querySelector('header h2');
     const headerSubtitle = document.querySelector('header span');
-    const headerTitle2 = document.querySelector('header h3')
+    const headerTitle2 = document.querySelector('header h3');
+
 
     oborTyp = obor.typ.toLowerCase();
 
@@ -73,7 +74,7 @@ function createSectionForYear(rocnik) {
     section.classList.add('m-2');
     section.innerHTML = `
         <h4 class="text-lg font-extrabold text-gray-800/80 mt-4">${rocnik}. ročník</h4>
-        <div class="flex flex-wrap">
+        <div class="flex flex-wrap justify-center">
             <div id="${rocnik}RocnikZimniSemestr" class="rocnikContainer mr-0.5">
                 <h5 class="text-sm text-gray-700 italic -mt-1 mb-3">zimní semestr</h5>
             </div>
@@ -110,7 +111,7 @@ function createSectionForHelper() {
     return section;
 }
 
-function displayData(data) {
+function displayData(data, faculty) {
     // Najdeme hlavní element pro vložení obsahu 
     const mainElement = document.querySelector('main');
 
@@ -119,7 +120,7 @@ function displayData(data) {
         // Zobrazení zprávy, že nejsou dostupné žádné předměty
         const noDataMessage = document.createElement('div');
         noDataMessage.textContent = 'Pro vybraný studijní plán nejsou ve STAGu k dispozici žádné předměty.';
-        noDataMessage.classList.add('text-gray-800', 'text-lg', 'font-semibold', 'mt-12', 'text-center', 'w-full', 'mx-auto'); 
+        noDataMessage.classList.add('text-gray-800', 'text-lg', 'font-semibold', 'mt-12', 'text-center', 'w-full', 'mx-auto');
         mainElement.appendChild(noDataMessage);
 
     } else {
@@ -162,12 +163,12 @@ function displayData(data) {
             skupina.forEach(predmet => {
                 const bgColorClass = predmet.statut === "A" ? 'bg-sky-500/50' : predmet.statut === "B" ? 'bg-amber-400/50' : 'bg-red-400/50';
                 const predmetHTML = `
-                <div class="${bgColorClass} my-0.5">
-                    <div class="flex items-center h-12 w-[54] justify-between font-sans px-4 py-6">
-                        <div class="text-sm font-normal line-clamp-3 leading-tight w-44">${predmet.nazev}</div>
-                        <div class="text-sm font-light italic text-gray-700">${predmet.kreditu}</div>
-                    </div>
-                </div>`;
+                    <a href="subject_detail.html?predmetIdno=${predmet.zkratka}&faculty=${faculty}" class="block ${bgColorClass} my-0.5">
+                        <div class="flex items-center h-12 w-[54] justify-between font-sans px-4 py-6">
+                            <div class="text-sm font-normal line-clamp-3 leading-tight w-44">${predmet.nazev}</div>
+                            <div class="text-sm font-light italic text-gray-700">${predmet.kreditu}</div>
+                        </div>
+                    </a>`;
 
                 const rocnik = predmet.doporucenyRocnik;
                 const semestr = predmet.vyukaZS === 'A' ? 'Zimni' : 'Letni';
