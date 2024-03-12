@@ -57,10 +57,11 @@ app.get('/data/:faculty/studijni_plany/:oborIdno', (req, res) => {
 });
 
 // Endpoint pro zobrazení detailu předmětu
-app.get('/data/:faculty/predmety/:predmetIdno', (req, res) => {
+app.get('/data/:faculty/predmety/:department/:acronym', (req, res) => {
+    const department = req.params.department;
+    const acronym = req.params.acronym;
     const faculty = req.params.faculty;
-    const predmetIdno = req.params.predmetIdno;
-    const filePath = path.join(__dirname, `server/data/${faculty}/predmety`, `${predmetIdno}.json`);
+    const filePath = path.join(__dirname, `server/data/${faculty}/predmety`, `${department}_${acronym}.json`);
     
     res.sendFile(filePath, function(err) {
         if (err) {
