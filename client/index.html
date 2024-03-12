@@ -11,48 +11,52 @@
 </head>
 
 <body class="bg-bg-gray-light">
-    <header class="bg-sky-700 px-7 py-6 md:px-10 md:py-12">
-
-        <!-- Navigace -->
-        <div class="flex justify-between items-center">
-            <h1 class="text-white hover:text-gray-300 font-bold text-xl md:text-2xl whitespace-pre-line "><a href="index.html">STUDIJNÍ
-                    PLÁNY</a>
-            </h1>
-            <button id="menu-btn" class="text-white text-3xl sm:hidden">☰</button>
-            <ul id="menu" class="hidden sm:flex space-x-5">
-                <li class="filter-btn cursor-pointer text-white hover:text-gray-300" data-filter="all">VŠE</li>
-                <li class="filter-btn cursor-pointer text-white hover:text-gray-300" data-filter="bakalarske">BAKALÁŘSKÉ</li>
-                <li class="filter-btn cursor-pointer text-white hover:text-gray-300" data-filter="navazujici">NAVAZUJÍCÍ</li>
-                <li class="filter-btn cursor-pointer text-white hover:text-gray-300" data-filter="doktorske">DOKTORSKÉ</li>
-            </ul>
-        </div>
-
-        <!-- Mobilní menu -->
-        <ul id="mobile-menu" class="sm:hidden bg-sky-700 w-full pt-4">
-            <li class="block py-2 text-white hover:text-gray-300" data-filter="all">VŠE</li>
-            <li class="block py-2 text-white hover:text-gray-300" data-filter="bakalarske">BAKALÁŘSKÉ</li>
-            <li class="block py-2 text-white hover:text-gray-300" data-filter="navazujici">NAVAZUJÍCÍ</li>
-            <li class="block py-2 text-white hover:text-gray-300" data-filter="doktorske">DOKTORSKÉ</li>
-        </ul>
-    </header>
-
-    <main>
+    <div style="background-image: linear-gradient(rgba(3, 105, 161, 0.9), rgba(14, 165, 233, 0.8)), url('assets/image.png'); background-size: cover; background-position: center;">
+        <header class="px-7 py-6 md:px-8 md:py-8">
+            <div class="flex justify-between items-center">
+                <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
+                <button class="text-white border-white border rounded-full px-4 py-2 hidden md:block"><a href="login.html"><i class="fas fa-user mr-2"></i>Přihlásit se</a></button>
+                <button class="md:hidden"><a href="login.html"><i class="fas fa-user text-white text-2xl"></i></a></button>
+            </div>
+        </header>
+        
         <!-- Sekce pro vyhledávání -->
-        <section class="bg-sky-700 pb-20">
-            <h2 class="text-white font-semibold text-center text-4xl md:text-5xl lg:text-6xl px-4 pt-20 pb-16 md:px-8 md:pt-24 md:pb-16 lg:pt-36 lg:pb-16">Přehled nabídky studia</h2>
-            <div class="flex justify-center pb-20 px-4 lg:pb-40 sm:px-0 ">
-                <form class="flex flex-col justify-center sm:flex-row w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
-                    <input type="search" name="search" placeholder="Vyhledat studijní program..." class="text-gray-700 w-full rounded-xl focus:outline-none px-3 py-4 mb-4 sm:mb-0 sm:mr-4">
-                    <button type="submit" class="text-white font-bold bg-amber-500 hover:bg-amber-600 rounded-xl focus:outline-none px-6 py-2">Hledat</button>
+        <section>
+            <h2 class="text-white font-semibold text-center text-4xl md:text-5xl lg:text-6xl px-4 pt-16 pb-6 md:px-8 md:pt-20 md:pb-8 lg:pt-28 lg:pb-8">Přehled nabídky studia</h2>
+            <div class="flex justify-center pb-12 px-4 lg:pb-20 sm:px-0">
+                <form class="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl relative">
+                    <input type="search" name="search" placeholder="Vyhledat studijní program..." class="w-full rounded-full focus:outline-none px-6 py-4 pl-12 mb-4 sm:mb-0 sm:mr-4">
+                    <i class="fas fa-search text-2xl text-gray-400/90 absolute top-0 left-0 mt-4 ml-4"></i>
                 </form>
             </div>
         </section>
 
-        <!-- Sekce pro zobrazení studijních programů -->
-        <section id="study-programs"
-            class="relative mt-[-100px] w-full md:max-w-3xl lg:max-w-5xl xl:max-w-7xl mx-auto px-4">
+       <!-- Sekce pro filtrování studijních programů -->
+        <section id="menu" class="flex flex-wrap space-x-5 justify-center pb-16 w-full md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto">
+            <!-- Skupina filtrů podle typu studijního programu -->
+            <div class="space-x-1 flex flex-wrap justify-center">
+                <button class="filter-btn bg-white rounded-full focus:bg-amber-500 font-bold text-sky-700 focus:text-white px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="all">Vše</button>
+                <button class="filter-btn bg-white rounded-full focus:bg-amber-500 font-bold text-sky-700 focus:text-white px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="bakalarske">Bakalářské</button>
+                <button class="filter-btn bg-white rounded-full focus:bg-amber-500 font-bold text-sky-700 focus:text-white px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="navazujici">Navazující</button>
+                <button class="filter-btn bg-white rounded-full focus:bg-amber-500 font-bold text-sky-700 focus:text-white px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="doktorske">Doktorské</button>
+            </div>
+            <!-- Skupina filtrů podle formy studia -->
+            <div class="space-x-1 flex flex-wrap justify-center">
+                <button class="filter-btn bg-white rounded-full focus:bg-amber-500 font-bold text-sky-700 focus:text-white px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="prezencni">Prezenční</button>
+                <button class="filter-btn bg-white rounded-full focus:bg-amber-500 font-bold text-sky-700 focus:text-white px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="kombinovane">Kombinované</button>
+            </div>
+            <!-- Skupina filtrů podle jazyka výuky -->
+            <div class="space-x-1 flex flex-wrap justify-center">
+                <button class="filter-btn bg-white rounded-full focus:bg-amber-500 font-bold text-sky-700 focus:text-white px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="cestina">Čeština</button>
+                <button class="filter-btn bg-white rounded-full focus:bg-amber-500 font-bold text-sky-700 focus:text-white px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="anglictina">Angličtina</button>
+            </div>
         </section>
-    </main>
+    </div>
+
+    <!-- Sekce pro zobrazení studijních programů -->
+    <section id="study-programs" class="w-full md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto mt-8 px-4">
+    </section>
+    
 </body>
 <script src="js/display_programs.js"></script>
 

@@ -3,8 +3,6 @@ let currentFilter = 'all'; // Proměnná pro filtr programů podle typu programu
 document.addEventListener('DOMContentLoaded', () => {
   setupSearchForm();
   setupFilterTypeButtons();
-  setupMobileMenu();
-  setupMobileMenuItems();
   fetchProgramData('PRF'); // Počáteční načtení dat
 });
 
@@ -24,28 +22,6 @@ function setupFilterTypeButtons() {
     });
   });
 }
-
-function setupMobileMenu() {
-  document.getElementById('menu-btn').addEventListener('click', function () {
-    var menu = document.getElementById('mobile-menu');
-    if (menu.classList.contains('hidden')) {
-      menu.classList.remove('hidden');
-    } else {
-      menu.classList.add('hidden');
-    }
-  });
-}
-
-function setupMobileMenuItems() {
-  document.querySelectorAll('#mobile-menu li').forEach(item => {
-    item.addEventListener('click', function() {
-      currentFilter = this.getAttribute('data-filter');
-      fetchProgramData('PRF'); 
-      document.getElementById('mobile-menu').classList.add('hidden');
-    });
-  });
-}
-
 
 function fetchProgramData(faculty, searchQuery = '') {
   const filePath = `/data/${faculty}/${faculty}_studijni_programy.json`;
@@ -126,24 +102,35 @@ function createCardForProgramType(container, programs, type, faculty) {
   };
 
   const card = document.createElement('div');
-  card.classList.add('bg-white', 'shadow-lg', 'rounded-xl', 'p-6', 'mb-4', 'overflow-hidden', 'animate-pop-in');
+  card.className = 'bg-white shadow-md rounded-lg overflow-hidden w-full mb-8 animate-pop-in';
+
+  const header = document.createElement('div');
+  header.className = 'bg-sky-700/90 py-2 px-4';
+
+  const body = document.createElement('div');
+  body.className = 'p-4';
 
   // Použití mapování pro zobrazení správného českého názvu
   const typeName = typeMapping[type] || type;
-  card.innerHTML = `<h3 class="text-xl font-semibold text-gray-800 mb-4">${typeName} programy</h3>`;
+  body.innerHTML = `<h3 class="text-xl font-semibold text-gray-800 px-2 py-4">${typeName} programy</h3>`;
 
   const table = createTableForPrograms(programs, faculty);
 
   // Pokud nejsou nalezeny žádné programy, zobrazíme chybovou zprávu
   if (table.querySelector('tbody tr') !== null) {
-    card.appendChild(table);
-    container.appendChild(card);
+    body.appendChild(table);
   }
   else {
-    card.innerHTML = `<h3 class="text-xl font-semibold text-gray-800 mb-4">${typeName} programy</h3>
-                      <p class="text-gray-700 text-lg font-normal text-center mt-4 pb-2">Nebyly nalezeny žádné programy odpovídající zadanému výrazu.</p>`;
-    container.appendChild(card);
+    const noProgramsMessage = document.createElement('p');
+    noProgramsMessage.className = 'text-gray-700 text-lg font-normal text-center mt-4 pb-2';
+    noProgramsMessage.textContent = 'Nebyly nalezeny žádné programy odpovídající zadanému výrazu.';
+    body.appendChild(noProgramsMessage);
   }
+
+  card.appendChild(header);
+  card.appendChild(body);
+
+  container.appendChild(card);
 }
 
 
