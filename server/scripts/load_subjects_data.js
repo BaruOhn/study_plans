@@ -17,9 +17,9 @@ async function loadSubjectData() {
         const apiUrl = `https://stagservices.upol.cz/ws/services/rest2/predmety/getPredmetInfo?katedra=${katedra}&zkratka=${zkratka}&outputFormat=JSON`;
         const response = await axios.get(apiUrl);
         const subjectData = response.data;
-        const subjectFilePath = path.join(subjectsDirPath, `${zkratka}.json`);
+        const subjectFilePath = path.join(subjectsDirPath, `${katedra}_${zkratka}.json`);
         fs.writeFileSync(subjectFilePath, JSON.stringify(subjectData, null, 2));
-        console.log(`Data pro předmět ${zkratka} byla uložena.`);
+        console.log(`Data pro předmět ${katedra}/${zkratka} byla uložena.`);
       }
     }
   } catch (error) {

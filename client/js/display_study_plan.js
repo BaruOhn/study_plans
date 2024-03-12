@@ -163,7 +163,7 @@ function displayData(data, faculty) {
             skupina.forEach(predmet => {
                 const bgColorClass = predmet.statut === "A" ? 'bg-sky-500/50' : predmet.statut === "B" ? 'bg-amber-400/50' : 'bg-red-400/50';
                 const predmetHTML = `
-                    <a href="subject_detail.html?predmetIdno=${predmet.zkratka}&faculty=${faculty}" class="block ${bgColorClass} my-0.5">
+                <a href="subject_detail.html?faculty=${faculty}&department=${predmet.katedra}&acronym=${predmet.zkratka}" class="block ${bgColorClass} my-0.5">
                         <div class="flex items-center h-12 w-[54] justify-between font-sans px-4 py-6">
                             <div class="text-sm font-normal line-clamp-3 leading-tight w-44">${predmet.nazev}</div>
                             <div class="text-sm font-light italic text-gray-700">${predmet.kreditu}</div>
