@@ -12,13 +12,24 @@
 </head>
 
 <body class="bg-bg-gray-light">
-    <header class="bg-sky-700 px-7 py-6 md:px-8 md:py-8">
-        <div class="flex justify-between items-center">
-            <h1 class="text-white hover:text-gray-300 font-bold text-xl md:text-2xl whitespace-pre-line "><a
-                    href="index.html">STUDIJNÍ PLÁNY</a></h1>
-            <button><a href="login.html">Přihlásit se</a></button>
-        </div>
+    <header class="bg-sky-700 px-7 py-4 md:px-8">
+            <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
     </header>
+
+    <main class="flex justify-center items-center">
+        <section>
+            <h2 class="text-sky-700 font-bold text-4xl text-center mt-16 mb-8">Přihlásit se</h2>
+            <article class="bg-white p-8 rounded-2xl">
+                <form action="index.html" method="post" class="flex flex-col">
+                    <label for="email" class="text-gray-700 mb-2">E-mail</label>
+                    <input type="email" id="email" name="email" placeholder="jan.novak@upol.cz" class="bg-bg-gray-light text-left w-60 sm:w-96 rounded-2xl px-5 py-3 mb-4 focus:outline-none">
+                    <label for="password" class="text-gray-700 mb-2">Heslo</label>
+                    <input type="password" id="password" name="password" placeholder="Zadejte heslo.." class="bg-bg-gray-light text-left w-full rounded-2xl px-5 py-3 mb-4 focus:outline-none">
+                    <button type="submit" class="bg-sky-700 text-white font-bold rounded-full px-5 py-3 mt-8">Přihlásit se<i class="fas fa-arrow-right ml-2"></i></button>
+                </form>
+            </article>
+        </section>
+    </main>
 </body>
 
 </html>

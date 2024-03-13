@@ -7,14 +7,25 @@
     <title>Studijní plán</title>
     <link href="css/styles.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/94bfb75d9d.js" crossorigin="anonymous"></script>
 </head>
 
-<body class="font-sans ">
-    <header>
-        <h2 class="text-sky-700 font-bold text-2xl mx-6 mt-7 program-name"></h2>
-        <span class="text-gray-500 mx-6 program-type"></span>
-        <h3 class="text-black font-bold text-xl mx-6 mt-7 program-form"></h3>
+<body class="font-sans">
+    <header class="bg-sky-700 px-7 md:px-8">
+        <div class="flex justify-between items-center">
+            <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
+            <button class="text-white border-white border rounded-full px-4 py-2 hidden md:block"><a href="login.html"><i class="fas fa-user mr-2"></i>Přihlásit se</a></button>
+            <button class="border border-white rounded-full px-4 py-2 md:hidden"><a href="login.html"><i class="fas fa-user text-white text-xl"></i></a></button>
+        </div>
     </header>
+    <section class="mx-9">
+        <div class="flex justify-between">
+            <h2 class="text-sky-700 font-bold text-2xl mt-7 program-name"></h2>
+            <button id="back-btn" class="text-gray-700 mt-7"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2"></i>Zpět</a></button>
+        </div>
+        <span class="text-gray-500 program-type"></span>
+        <h3 class="text-black font-bold text-xl mt-7 program-form"></h3>
+    </section>
     <main class="mx-4 flex flex-wrap justify-center">
 
     </main>
