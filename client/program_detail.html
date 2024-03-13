@@ -6,19 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Studijního Programu</title>
     <link href="css/styles.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/94bfb75d9d.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <header class="flex justify-between bg-sky-700 px-10 py-8">
-        <h1 class="font-bold text-2xl hover:text-gray-300 whitespace-pre-line text-white"><a href="index.html">STUDIJNÍ
-                PLÁNY</a></h1>
+    <header class="bg-sky-700 px-7 py-4 md:px-8">
+        <div class="flex justify-between items-center">
+            <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
+            <button class="text-white border-white border rounded-full px-4 py-2 hidden md:block"><a href="login.html"><i class="fas fa-user mr-2"></i>Přihlásit se</a></button>
+            <button class="border border-white rounded-full px-4 py-2 md:hidden"><a href="login.html"><i class="fas fa-user text-white text-xl"></i></a></button>
+        </div>
     </header>
-
-    <section id="obory-list" class="flex justify-center">
+    
+    <section id="obory-list" class="flex flex-col justify-center">
+        <h2 class="text-gray-700 font-bold text-2xl text-center pt-12">Seznam programů</h2>
+        <button id="back-btn" class="text-gray-700 py-7"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2"></i>Zpět</a></button>
         <div id="obor-seznam" class="flex flex-col items-center">
-            <h2 id="program-nazev" class="text-custom-gray font-bold text-left text-2xl mx-8 mt-16 mb-10">Seznam programů</h2>
             <!-- Dynamicky načtený seznam oborů se zobrazí zde -->
         </div>
     </section>

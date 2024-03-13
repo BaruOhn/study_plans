@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     console.error('Chyba: Chybějící parametry v URL.');
   }
+
+  // Zde přidáme kód pro zpětné tlačítko
+  const backBtn = document.getElementById('back-btn');
+  backBtn.addEventListener('click', () => {
+      window.history.back();
+  });
 });
 
 function fetchProgramDetail(faculty, stprIdno) {

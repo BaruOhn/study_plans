@@ -16,6 +16,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error('Chyba při načítání studijního plánu:', error);
     }
+
+    // Zde přidáme kód pro zpětné tlačítko
+    const backBtn = document.getElementById('back-btn');
+    backBtn.addEventListener('click', () => {
+        window.history.back();
+    });
 });
 
 async function fetchProgramDetail(faculty, oborIdno, stprIdno) {
@@ -33,7 +39,7 @@ async function fetchProgramDetail(faculty, oborIdno, stprIdno) {
 
     // Aktualizujte záhlaví stránky správným oborem
     if (selectedObor) {
-        updatePageHeader(selectedObor);
+        updatePageHeadings(selectedObor);
     } else {
         console.error('Obor s daným ID nebyl nalezen.');
     }
@@ -48,10 +54,10 @@ async function fetchData(path) {
     return response.json();
 }
 
-function updatePageHeader(obor) {
-    const headerTitle = document.querySelector('header h2');
-    const headerSubtitle = document.querySelector('header span');
-    const headerTitle2 = document.querySelector('header h3');
+function updatePageHeadings(obor) {
+    const headerTitle = document.querySelector('section h2');
+    const headerSubtitle = document.querySelector('section span');
+    const headerTitle2 = document.querySelector('section h3');
 
 
     oborTyp = obor.typ.toLowerCase();
