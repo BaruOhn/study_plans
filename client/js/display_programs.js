@@ -1,23 +1,31 @@
-let currentFilter = 'all'; // Proměnná pro filtr programů podle typu programu
+let selectedTypeFilter = 'all'; // Proměnná pro filtr programů podle typu programu
 
 document.addEventListener('DOMContentLoaded', () => {
   setupSearchForm();
-  setupFilterTypeButtons();
+  setupFilterButtons();
+  setupSearchIconClick(); // Přidání obsluhy kliknutí na ikonu lupy
   fetchProgramData('PRF'); // Počáteční načtení dat
 });
 
 function setupSearchForm() {
-  document.querySelector('form').addEventListener('submit', (e) => {
+  document.querySelector('#search-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    const searchQuery = document.querySelector('input[type="search"]').value;
+    const searchQuery = document.querySelector('#search-input').value;
     fetchProgramData('PRF', searchQuery); // Předpokládáme, že vyhledáváme pro PRF
   });
 }
 
-function setupFilterTypeButtons() {
+function setupSearchIconClick() {
+  document.querySelector('#search-icon').addEventListener('click', () => {
+    const searchQuery = document.querySelector('#search-input').value;
+    fetchProgramData('PRF', searchQuery);
+  });
+}
+
+function setupFilterButtons() {
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', function () {
-      currentFilter = this.getAttribute('data-filter');
+      selectedTypeFilter = this.getAttribute('data-filter');
       fetchProgramData('PRF'); // Znovu načteme data a aplikujeme filtr
     });
   });
@@ -84,7 +92,7 @@ function displayProgramData(data, faculty) {
   let hasPrograms = false;
   ['bakalářský', 'navazující', 'doktorský'].forEach((programType, index) => {
     const filterMapping = { 'bakalářský': 'bakalarske', 'navazující': 'navazujici', 'doktorský': 'doktorske' };
-    if (currentFilter === 'all' || currentFilter === filterMapping[programType]) {
+    if (selectedTypeFilter === 'all' || selectedTypeFilter === filterMapping[programType]) {
       if (data[programType]) {
         createCardForProgramType(programsContainer, data[programType], programType, faculty);
         hasPrograms = true;

@@ -10,10 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Zde přidáme kód pro zpětné tlačítko
-  const backBtn = document.getElementById('back-btn');
-  backBtn.addEventListener('click', () => {
-      window.history.back();
-  });
+    const backBtn = document.getElementById('back-btn');
+    backBtn.addEventListener('click', () => {
+        window.history.back();
+    });
 });
 
 function fetchProgramDetail(faculty, stprIdno) {
@@ -62,7 +62,7 @@ function displayData(data, faculty, stprIdno) {
 
     // Create the link
     const cardLink = document.createElement('a');
-    cardLink.className = 'bg-amber-500/90 text-white no-underline rounded p-3 m-2 transition-shadow hover:shadow-md hover:bg-amber-500';
+    cardLink.className = 'bg-amber-500/90 text-white no-underline rounded-full p-3 m-2 transition-shadow hover:shadow-md hover:bg-amber-500';
     cardLink.setAttribute('href', `study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}`);
     cardLink.textContent = 'Studijní plán';
 
