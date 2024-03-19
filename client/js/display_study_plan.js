@@ -17,12 +17,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Chyba při načítání studijního plánu:', error);
     }
 
-    // Zde přidáme kód pro zpětné tlačítko
-    const backBtn = document.getElementById('back-btn');
-    backBtn.addEventListener('click', () => {
-        window.history.back();
+    // Přidání event listeneru pro tlačítko pro stažení PDF
+    document.getElementById('download-pdf').addEventListener('click', () => {
+        generatePdf();
     });
 });
+
+// Funkce pro generování PDF souboru
+function generatePdf() {
+    const element = document.body; 
+    html2pdf()
+        .from(element)
+        .set({ 
+            margin: 0,
+            filename: 'studijni_plan.pdf', // Název PDF souboru
+            html2canvas: { 
+                scale: 4, 
+                letterRendering: true // Zapnutí podpory pro fonty
+            },
+            jsPDF: {
+                format: 'a4', // Formát stránky A4
+            }
+        }) 
+        .save(); // Uložení PDF souboru
+}
 
 async function fetchProgramDetail(faculty, oborIdno, stprIdno) {
     // Sestavení cest a načtení dat
@@ -93,10 +111,17 @@ function createSectionForYear(rocnik) {
 }
 
 function createSectionForHelper() {
+    var credits = 0;
+    // Určení počtu kreditů na základě typu studia
+    if (oborTyp === 'bakalářský') {
+        credits = 180;
+    } else if (oborTyp === 'magisterský' || oborTyp === 'doktorský') {
+        credits = 120;
+    }
     const section = document.createElement('section');
     section.innerHTML = `
-        <div class="mx-2 mt-24 mb-12">
-            <p class="text-sm text-gray-800 w-4/5">Za celé studium musí studenti získat 180 kreditů. Kromě uvedených předmětů
+        <div class="mx-6 mt-24 mb-12">
+            <p class="text-sm text-gray-800 w-4/5">Za celé studium musí studenti získat ${credits} kreditů. Kromě uvedených předmětů
                 si mohou vybírat také z bohaté nabídky předmětů dalších kateder.</p>
             <div class="text-gray-700 italic">
                 <div class="flex items-center mt-2">
@@ -119,7 +144,7 @@ function createSectionForHelper() {
 
 function displayData(data, faculty) {
     // Najdeme hlavní element pro vložení obsahu 
-    const mainElement = document.querySelector('main');
+    const mainContent = document.getElementById('content');
 
     // Kontrola, zda pole predmetOboru obsahuje nějaké předměty
     if (data.predmetOboru.length === 0) {
@@ -127,7 +152,7 @@ function displayData(data, faculty) {
         const noDataMessage = document.createElement('div');
         noDataMessage.textContent = 'Pro vybraný studijní plán nejsou ve STAGu k dispozici žádné předměty.';
         noDataMessage.classList.add('text-gray-800', 'text-lg', 'font-semibold', 'mt-12', 'text-center', 'w-full', 'mx-auto');
-        mainElement.appendChild(noDataMessage);
+        mainContent.appendChild(noDataMessage);
 
     } else {
         // Filtrujeme předměty s 0 kredity a odstraníme duplikáty předmětů
@@ -161,7 +186,7 @@ function displayData(data, faculty) {
         // Vytvoření sekce pro každý ročník
         for (let rocnik = 1; rocnik <= pocetRocniku; rocnik++) {
             const section = createSectionForYear(rocnik);
-            mainElement.appendChild(section);
+            mainContent.appendChild(section);
         }
 
         // Přidání předmětů do odpovídajících sekcí
@@ -188,8 +213,8 @@ function displayData(data, faculty) {
         });
 
         const sectionHelp = createSectionForHelper();
+        const mainElement = document.querySelector('main');
         // Přidání sekce s nápovědou
         mainElement.appendChild(sectionHelp)
-
     }
 }

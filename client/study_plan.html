@@ -8,6 +8,8 @@
     <link href="css/styles.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/94bfb75d9d.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
 <body class="font-sans">
@@ -19,15 +21,17 @@
         </div>
     </header>
     <section class="mx-9">
-        <div class="flex justify-between">
-            <h2 class="text-sky-700 font-bold text-2xl mt-7 program-name"></h2>
-            <button id="back-btn" class="text-gray-700 mt-7"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2"></i>Zpět</a></button>
+        <div class="flex flex-wrap justify-between">
+            <div>
+                <h2 class="text-sky-700 font-bold text-2xl mt-7 program-name"></h2>
+                <span class="text-gray-500 program-type"></span>
+            </div>
+            <button id="download-pdf" class="text-gray-700 print:hidden mt-7"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-file text-gray-700 mr-2"></i>Stáhnout PDF</button>
         </div>
-        <span class="text-gray-500 program-type"></span>
-        <h3 class="text-black font-bold text-xl mt-7 program-form"></h3>
+        <h3 class="text-gray-700 font-bold text-xl mt-7 program-form"></h3>
     </section>
-    <main class="mx-4 flex flex-wrap justify-center">
-
+    <main class="mx-4">
+        <div id="content" class="flex flex-wrap justify-center w-full"></div>
     </main>
     <script src="js/display_study_plan.js"></script>
 </body>

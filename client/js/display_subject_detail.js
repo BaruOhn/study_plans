@@ -20,6 +20,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     backBtn.addEventListener('click', () => {
         window.history.back();
     });
+
+    const closeBtn = document.getElementById('close-btn');
+    closeBtn.addEventListener('click', () => {
+        window.history.back();
+    });
 });
 
 async function fetchSubjectDetail(department, acronym, faculty) {
