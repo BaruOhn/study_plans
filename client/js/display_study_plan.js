@@ -1,4 +1,5 @@
 let oborTyp = "";
+let nazevProgramu = "";
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Zpracování URL parametrů a načtení dat
@@ -19,28 +20,41 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Přidání event listeneru pro tlačítko pro stažení PDF
     document.getElementById('download-pdf').addEventListener('click', () => {
-        generatePdf();
-    });
+        generatePdf(oborIdno, faculty, stprIdno, nazevProgramu);
+    });    
 });
 
-// Funkce pro generování PDF souboru
-function generatePdf() {
-    const element = document.body; 
-    html2pdf()
-        .from(element)
-        .set({ 
-            margin: 0,
-            filename: 'studijni_plan.pdf', // Název PDF souboru
-            html2canvas: { 
-                scale: 4, 
-                letterRendering: true // Zapnutí podpory pro fonty
-            },
-            jsPDF: {
-                format: 'a4', // Formát stránky A4
-            }
-        }) 
-        .save(); // Uložení PDF souboru
+function generatePdf(oborIdno, faculty, stprIdno, programName) {
+    // Vytvoření požadavku na server pro generování PDF
+    const queryParams = new URLSearchParams({ oborIdno, faculty, stprIdno }).toString();
+    const url = `/generate_pdf?${queryParams}`;
+    fetch(url)
+    .then(response => {
+        if (response.ok) return response.blob();
+        throw new Error('Něco se nepovedlo při generování PDF.');
+    })
+    .then(blob => {
+        // Vytvoření URL z blobu
+        const url = window.URL.createObjectURL(blob);
+        // Vytvoření nového odkazu pro stažení
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        // Doporučení názvu souboru
+        a.download = `${programName}_studijni_plan.pdf`.replace(/ /g,"_");
+        // Přidání odkazu do dokumentu
+        document.body.appendChild(a);
+        // Simulace kliknutí pro stažení
+        a.click();
+        // Odstranění odkazu po stažení
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    })
+    .catch(error => {
+        console.error('Chyba:', error);
+    });
 }
+
 
 async function fetchProgramDetail(faculty, oborIdno, stprIdno) {
     // Sestavení cest a načtení dat
@@ -77,7 +91,6 @@ function updatePageHeadings(obor) {
     const headerSubtitle = document.querySelector('section span');
     const headerTitle2 = document.querySelector('section h3');
 
-
     oborTyp = obor.typ.toLowerCase();
 
     if (obor && obor.nazev && obor.forma) {
@@ -85,10 +98,14 @@ function updatePageHeadings(obor) {
         headerSubtitle.textContent = `${oborTyp} program`;
         headerTitle2.textContent = `${obor.forma} forma studia`
 
+        nazevProgramu = obor.nazev;
+
     } else {
         headerTitle.textContent = 'Studijní plán - Neznámý obor';
         headerSubtitle.textContent = 'Neznámý typ programu';
         headerTitle2.textContent = 'Neznámá forma studia';
+
+        nazevProgramu = 'Neznámý obor';
     }
 }
 
@@ -97,13 +114,13 @@ function createSectionForYear(rocnik) {
     const section = document.createElement('section');
     section.classList.add('m-2');
     section.innerHTML = `
-        <h4 class="text-lg font-extrabold text-gray-800/80 mt-4">${rocnik}. ročník</h4>
+        <h4 class="text-lg font-extrabold text-gray-800/80 mt-4 print:text-base">${rocnik}. ročník</h4>
         <div class="flex flex-wrap justify-center">
-            <div id="${rocnik}RocnikZimniSemestr" class="rocnikContainer mr-0.5">
-                <h5 class="text-sm text-gray-700 italic -mt-1 mb-3">zimní semestr</h5>
+            <div id="${rocnik}RocnikZimniSemestr" class="rocnikContainer mr-0.5 mb-8">
+                <h5 class="text-sm text-gray-700 italic -mt-1 mb-3 print:text-xs">zimní semestr</h5>
             </div>
-            <div id="${rocnik}RocnikLetniSemestr" class="rocnikContainer">
-                <h5 class="text-sm text-gray-700 italic -mt-1 mb-3">letní semestr</h5>
+            <div id="${rocnik}RocnikLetniSemestr" class="rocnikContainer mb-8">
+                <h5 class="text-sm text-gray-700 italic -mt-1 mb-3 print:text-xs">letní semestr</h5>
             </div>
         </div>
     `;
@@ -120,7 +137,7 @@ function createSectionForHelper() {
     }
     const section = document.createElement('section');
     section.innerHTML = `
-        <div class="mx-6 mt-24 mb-12">
+        <div class="mx-2 sm:mx-6 mt-6 sm:mt-24 mb-12 print:mx-2">
             <p class="text-sm text-gray-800 w-4/5">Za celé studium musí studenti získat ${credits} kreditů. Kromě uvedených předmětů
                 si mohou vybírat také z bohaté nabídky předmětů dalších kateder.</p>
             <div class="text-gray-700 italic">
@@ -195,9 +212,9 @@ function displayData(data, faculty) {
                 const bgColorClass = predmet.statut === "A" ? 'bg-sky-500/50' : predmet.statut === "B" ? 'bg-amber-400/50' : 'bg-red-400/50';
                 const predmetHTML = `
                 <a href="subject_detail.html?faculty=${faculty}&department=${predmet.katedra}&acronym=${predmet.zkratka}" class="block ${bgColorClass} my-0.5">
-                        <div class="flex items-center h-12 w-[54] justify-between font-sans px-4 py-6">
-                            <div class="text-sm font-normal line-clamp-3 leading-tight w-44">${predmet.nazev}</div>
-                            <div class="text-sm font-light italic text-gray-700">${predmet.kreditu}</div>
+                        <div class="flex items-center h-12 w-[54] print:w-[30] print:h-8 justify-between font-sans px-4 py-6 print:px-2 print:py-4">
+                            <div class="text-sm font-normal line-clamp-3 leading-tight w-44 print:text-[8px] print:w-24">${predmet.nazev}</div>
+                            <div class="text-sm font-light italic text-gray-700 print:text-[8px]">${predmet.kreditu}</div>
                         </div>
                     </a>`;
 

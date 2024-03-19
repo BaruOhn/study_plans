@@ -1,6 +1,6 @@
+const puppeteer = require('puppeteer');
 const express = require('express');
 const path = require('path');
-const fs = require('fs');
 const app = express();
 const port = 3000;
 
@@ -69,6 +69,36 @@ app.get('/data/:faculty/predmety/:department/:acronym', (req, res) => {
         }
     });
 });
+
+app.get('/generate_pdf', async (req, res) => {
+    // Příjem parametrů z query
+    const { oborIdno, faculty, stprIdno } = req.query;
+    
+    if (!oborIdno || !faculty || !stprIdno) {
+        return res.status(400).send('Chybějící parametry.');
+    }
+
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    // Sestavení URL s potřebnými parametry
+    const url = `http://localhost:3000/study_plan.html?oborIdno=${oborIdno}&faculty=${faculty}&stprIdno=${stprIdno}`;
+
+    try {
+        await page.goto(url, { waitUntil: 'networkidle0' });
+        const pdf = await page.pdf({ format: 'A4', printBackground: true });
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=study_plan.pdf');
+        res.send(pdf);
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        res.status(500).send('Chyba při generování PDF.');
+    } finally {
+        await browser.close();
+    }
+});
+
 
 // Spuštění serveru
 app.listen(port, () => {
