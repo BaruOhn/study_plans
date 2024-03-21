@@ -1,4 +1,4 @@
-let selectedTypeFilter = 'all'; // Proměnná pro filtr programů podle typu programu
+let selectedTypeFilters = ["Bakalářský"]; // Pole pro filtr programů podle typu programu
 
 document.addEventListener('DOMContentLoaded', () => {
   setupSearchForm();
@@ -24,12 +24,31 @@ function setupSearchIconClick() {
 
 function setupFilterButtons() {
   document.querySelectorAll('.filter-btn').forEach(btn => {
+    const filterValue = btn.getAttribute('data-filter');
+
+    // Pokud je filtr vybrán, nastavíme tlačítko jako aktivní
+    if (selectedTypeFilters.includes(filterValue)) {
+      btn.classList.remove('bg-white', 'text-sky-700');
+      btn.classList.add('bg-amber-500', 'text-white');
+    }
+
     btn.addEventListener('click', function () {
-      selectedTypeFilter = this.getAttribute('data-filter');
-      fetchProgramData('PRF'); // Znovu načteme data a aplikujeme filtr
+      if (selectedTypeFilters.includes(filterValue)) {
+        // Odebrání filtru
+        selectedTypeFilters = selectedTypeFilters.filter(f => f !== filterValue);
+        this.classList.remove('bg-amber-500', 'text-white');
+        this.classList.add('bg-white', 'text-sky-700');
+      } else {
+        // Přidání filtru
+        selectedTypeFilters.push(filterValue);
+        this.classList.remove('bg-white', 'text-sky-700');
+        this.classList.add('bg-amber-500', 'text-white');
+      }
+      fetchProgramData('PRF'); // Znovu načteme data s aktualizovanými filtry
     });
   });
 }
+
 
 function fetchProgramData(faculty, searchQuery = '') {
   const filePath = `/data/${faculty}/${faculty}_studijni_programy.json`;
@@ -85,28 +104,27 @@ function getLevenshteinDistance(a, b) {
   return dp[m][n];
 }
 
+// Vytvoří kartu pro zvolené typy programů a vyfiltruje ostatní
 function displayProgramData(data, faculty) {
   const programsContainer = document.getElementById('study-programs');
   programsContainer.innerHTML = '';
 
-  let hasPrograms = false;
-  ['bakalářský', 'navazující', 'doktorský'].forEach((programType, index) => {
-    const filterMapping = { 'bakalářský': 'bakalarske', 'navazující': 'navazujici', 'doktorský': 'doktorske' };
-    if (selectedTypeFilter === 'all' || selectedTypeFilter === filterMapping[programType]) {
+  ['Bakalářský', 'Navazující', 'Doktorský'].forEach((programType) => {
+    if (selectedTypeFilters.includes(programType)) {
       if (data[programType]) {
         createCardForProgramType(programsContainer, data[programType], programType, faculty);
-        hasPrograms = true;
       }
     }
   });
 }
 
+// Vytvoří kartu pro daný typ programu
 function createCardForProgramType(container, programs, type, faculty) {
   // Mapování pro správné české názvy
   const typeMapping = {
-    'bakalářský': 'Bakalářské',
-    'navazující': 'Navazující',
-    'doktorský': 'Doktorské'
+    'Bakalářský': 'Bakalářské',
+    'Navazující': 'Navazující',
+    'Doktorský': 'Doktorské'
   };
 
   const card = document.createElement('div');
@@ -141,7 +159,7 @@ function createCardForProgramType(container, programs, type, faculty) {
   container.appendChild(card);
 }
 
-
+// Vytvoří tabulku programů pro daný typ programu
 function createTableForPrograms(programs, faculty) {
   let table = document.createElement('table');
   table.classList.add('min-w-full', 'leading-normal');
