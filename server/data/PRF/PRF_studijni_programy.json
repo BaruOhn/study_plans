@@ -1,5 +1,5 @@
 {
-  "bakalářský": {
+  "Bakalářský": {
     "Aplikovaná fyzika": {
       "2125": {
         "stprIdno": 2125,
@@ -6153,7 +6153,7 @@
       }
     }
   },
-  "navazující": {
+  "Navazující": {
     "Analytická chemie": {
       "2730": {
         "stprIdno": 2730,
@@ -13676,7 +13676,7 @@
       }
     }
   },
-  "doktorský": {
+  "Doktorský": {
     "Algebra a geometrie": {
       "2487": {
         "stprIdno": 2487,
@@ -25728,7 +25728,7 @@
       }
     }
   },
-  "rigorózní": {
+  "Rigorózní": {
     "Analytická chemie": {
       "2838": {
         "stprIdno": 2838,
@@ -30272,7 +30272,7 @@
       }
     }
   },
-  "celoživotní": {
+  "Celoživotní": {
     "Další vzdělávání pedagogických pracovníků": {
       "2180": {
         "stprIdno": 2180,

@@ -7,15 +7,15 @@ async function fetchProgramsData() {
     .then(response => {
       const data = response.data.programInfo;
       const structuredData = {
-        bakalářský: {},
-        navazující: {},
-        doktorský: {},
+        Bakalářský: {},
+        Navazující: {},
+        Doktorský: {},
       };
 
       data.forEach(program => {
         const key = program.stprIdno;
         const nazev = program.nazev;
-        const typ = program.typ.toLowerCase();
+        const typ = program.typ;
 
         // Inicializace objektu pro daný typ programu, pokud neexistuje
         if (!structuredData[typ]) {
