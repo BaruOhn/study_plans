@@ -1,17 +1,32 @@
-let selectedTypeFilters = ["Bakalářský"]; // Pole pro filtr programů podle typu programu
+let selectedTypeFilters = ["Bakalářský"]; 
+let selectedFormFilters = ["Prezenční"];
+let selectedLangFilters = ["Čeština"]; 
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Obnovíme filtry ze sessionStorage
+  selectedTypeFilters = JSON.parse(sessionStorage.getItem('selectedTypeFilters')) || ["Bakalářský"];
+  selectedFormFilters = JSON.parse(sessionStorage.getItem('selectedFormFilters')) || ["Prezenční"];
+  selectedLangFilters = JSON.parse(sessionStorage.getItem('selectedLangFilters')) || ["Čeština"];
+  const savedSearchQuery = sessionStorage.getItem('searchQuery') || '';
+  
+  document.querySelector('#search-input').value = savedSearchQuery;
+
   setupSearchForm();
-  setupFilterButtons();
-  setupSearchIconClick(); // Přidání obsluhy kliknutí na ikonu lupy
-  fetchProgramData('PRF'); // Počáteční načtení dat
+  setupFilterButtons('.filter-btn-type', selectedTypeFilters);
+  setupFilterButtons('.filter-btn-form', selectedFormFilters);
+  setupFilterButtons('.filter-btn-lang', selectedLangFilters);
+  setupSearchIconClick();
+  
+  // Načteme data s obnovenými filtry a vyhledávacím dotazem
+  fetchProgramData('PRF', savedSearchQuery);
 });
+
 
 function setupSearchForm() {
   document.querySelector('#search-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const searchQuery = document.querySelector('#search-input').value;
-    fetchProgramData('PRF', searchQuery); // Předpokládáme, že vyhledáváme pro PRF
+    fetchProgramData('PRF', searchQuery); 
   });
 }
 
@@ -22,33 +37,42 @@ function setupSearchIconClick() {
   });
 }
 
-function setupFilterButtons() {
-  document.querySelectorAll('.filter-btn').forEach(btn => {
+function setupFilterButtons(selector, selectedFilters) {
+  document.querySelectorAll(selector).forEach(btn => {
     const filterValue = btn.getAttribute('data-filter');
 
-    // Pokud je filtr vybrán, nastavíme tlačítko jako aktivní
-    if (selectedTypeFilters.includes(filterValue)) {
-      btn.classList.remove('bg-white', 'text-sky-700');
-      btn.classList.add('bg-amber-500', 'text-white');
-    }
+    // Aktivace tlačítka, pokud je filtr vybrán
+    toggleButtonActiveState(btn, selectedFilters.includes(filterValue));
 
     btn.addEventListener('click', function () {
-      if (selectedTypeFilters.includes(filterValue)) {
-        // Odebrání filtru
-        selectedTypeFilters = selectedTypeFilters.filter(f => f !== filterValue);
-        this.classList.remove('bg-amber-500', 'text-white');
-        this.classList.add('bg-white', 'text-sky-700');
+      const filterIndex = selectedFilters.indexOf(filterValue);
+      if (filterIndex > -1) {
+        selectedFilters.splice(filterIndex, 1); // Odebrání filtru
       } else {
-        // Přidání filtru
-        selectedTypeFilters.push(filterValue);
-        this.classList.remove('bg-white', 'text-sky-700');
-        this.classList.add('bg-amber-500', 'text-white');
+        selectedFilters.push(filterValue); // Přidání filtru
       }
-      fetchProgramData('PRF'); // Znovu načteme data s aktualizovanými filtry
+      toggleButtonActiveState(this, filterIndex === -1);
+
+      // Znovunačtení dat po změně filtrů (včetně vyhledávacího dotazu)
+      const searchQuery = document.querySelector('#search-input').value;
+      fetchProgramData('PRF', searchQuery);
+
+      // Uložení filtrů do session storage
+      saveFiltersToSessionStorage();
     });
   });
 }
 
+// Pomocná funkce pro změnu vzhledu tlačítka
+function toggleButtonActiveState(button, isActive) {
+  if (isActive) {
+    button.classList.remove('bg-white', 'text-sky-700');
+    button.classList.add('bg-amber-500', 'text-white');
+  } else {
+    button.classList.remove('bg-amber-500', 'text-white');
+    button.classList.add('bg-white', 'text-sky-700');
+  }
+}
 
 function fetchProgramData(faculty, searchQuery = '') {
   const filePath = `/data/${faculty}/${faculty}_studijni_programy.json`;
@@ -104,15 +128,52 @@ function getLevenshteinDistance(a, b) {
   return dp[m][n];
 }
 
-// Vytvoří kartu pro zvolené typy programů a vyfiltruje ostatní
+function filterProgramsByCriteria(allPrograms, selectedFilters, criteriaKey) {
+  let programsAfterFiltering = {};
+
+  Object.keys(allPrograms).forEach(programName => {
+    // Získání detailů konkrétního programu
+    const specificProgramDetails = allPrograms[programName];
+    const programsMatchingCriteria = Object.entries(specificProgramDetails).filter(([programId, programDetails]) => {
+      return selectedFilters.length === 0 || selectedFilters.includes(programDetails[criteriaKey]);
+    }).reduce((filteredPrograms, [programId, programDetails]) => {
+      // Vytvoření nového objektu s programy, které prošly filtrem
+      filteredPrograms[programId] = programDetails;
+      return filteredPrograms;
+    }, {});
+
+    // Pokud existují nějaké programy po filtraci, přidají se do výsledného objektu
+    if (Object.keys(programsMatchingCriteria).length > 0) {
+      programsAfterFiltering[programName] = programsMatchingCriteria;
+    }
+  });
+
+  return programsAfterFiltering;
+}
+
+// Uloží vybrané filtry do session storage
+function saveFiltersToSessionStorage() {
+  sessionStorage.setItem('selectedTypeFilters', JSON.stringify(selectedTypeFilters));
+  sessionStorage.setItem('selectedFormFilters', JSON.stringify(selectedFormFilters));
+  sessionStorage.setItem('selectedLangFilters', JSON.stringify(selectedLangFilters));
+  sessionStorage.setItem('searchQuery', document.querySelector('#search-input').value);
+}
+
+// Vyfiltruje a zobrazí programy podle zadaných filtrů a zavolá funkci pro vytvoření karet
 function displayProgramData(data, faculty) {
   const programsContainer = document.getElementById('study-programs');
   programsContainer.innerHTML = '';
 
-  ['Bakalářský', 'Navazující', 'Doktorský'].forEach((programType) => {
+  ['Bakalářský', 'Navazující', 'Doktorský'].forEach(programType => {
     if (selectedTypeFilters.includes(programType)) {
-      if (data[programType]) {
-        createCardForProgramType(programsContainer, data[programType], programType, faculty);
+      let programData = data[programType] || {};
+      let filteredByForm = filterProgramsByCriteria(programData, selectedFormFilters, 'forma');
+      let filteredByLanguage = filterProgramsByCriteria(filteredByForm, selectedLangFilters, 'jazyk');
+
+      if (Object.keys(filteredByLanguage).length > 0) {
+        createCardForProgramType(programsContainer, filteredByLanguage, programType, faculty);
+      } else {
+        createCardForProgramType(programsContainer, {}, programType, faculty);
       }
     }
   });
@@ -131,22 +192,22 @@ function createCardForProgramType(container, programs, type, faculty) {
   card.className = 'bg-white shadow-md rounded-lg overflow-hidden w-full mb-8 animate-pop-in';
 
   const header = document.createElement('div');
-  header.className = 'bg-sky-700/90 py-2 px-4';
+  header.className = 'py-2 px-4';
 
   const body = document.createElement('div');
   body.className = 'p-4';
 
-  // Použití mapování pro zobrazení správného českého názvu
   const typeName = typeMapping[type] || type;
   body.innerHTML = `<h3 class="text-xl font-semibold text-gray-800 px-2 py-4">${typeName} programy</h3>`;
 
   const table = createTableForPrograms(programs, faculty);
 
-  // Pokud nejsou nalezeny žádné programy, zobrazíme chybovou zprávu
+  // Kontrola, zda tabulka obsahuje nějaké programy
   if (table.querySelector('tbody tr') !== null) {
+    header.className += ' bg-sky-700/90';
     body.appendChild(table);
-  }
-  else {
+  } else {
+    header.className += ' bg-gray-400';
     const noProgramsMessage = document.createElement('p');
     noProgramsMessage.className = 'text-gray-700 text-lg font-normal text-center mt-4 pb-2';
     noProgramsMessage.textContent = 'Nebyly nalezeny žádné programy odpovídající zadanému výrazu.';
