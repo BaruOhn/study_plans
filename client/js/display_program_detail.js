@@ -56,7 +56,7 @@ function displayData(data, faculty, stprIdno) {
     const cardBody = document.createElement('div');
     cardBody.className = 'm-2 text-center sm:text-left';
     cardBody.innerHTML = `
-        <p class="hidden sm:block">${obor.anotaceCz}</p>
+        <p class="hidden sm:block">${obor.anotaceCz ? obor.anotaceCz : 'Anotace není k dispozici.'}</p>
         <button class="bg-amber-500/90 text-white no-underline rounded-full p-3 -ml-2 mt-4 transition-shadow hover:shadow-md hover:bg-amber-500"><a href="study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}"></a>Studijní plán</button>
     `;
 

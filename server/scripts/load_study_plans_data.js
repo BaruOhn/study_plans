@@ -2,48 +2,43 @@ const fs = require('fs').promises;
 const path = require('path');
 const axios = require('axios');
 
-const oboryDir = path.join(__dirname, '..', 'data', 'PRF', 'obory');
-const studijniPlanyDir = path.join(__dirname, '..', 'data', 'PRF', 'studijni_plany');
+const programDetailsDirPath = path.join(__dirname, '..', 'data', 'PRF', 'obory');
+const studyPlansDirPath = path.join(__dirname, '..', 'data', 'PRF', 'studijni_plany');
 
-async function loadAndSaveOborData() {
+// Načtení a uložení dat studijních plánů
+async function fetchOborData() {
   try {
-    const files = await fs.readdir(oboryDir);
+    const files = await fs.readdir(programDetailsDirPath);
 
     for (const file of files) {
-      const filePath = path.join(oboryDir, file);
+      const filePath = path.join(programDetailsDirPath, file);
       const data = await fs.readFile(filePath);
       const obor = JSON.parse(data);
 
       if (!obor.oborInfo || obor.oborInfo.length === 0) {
-        console.error(`Invalid or missing oborInfo for file: ${file}`);
-        continue; // Skip this file and move to the next one
+        console.error(`oborInfo nebylo nalezeno pro obor: ${file}`);
+        continue;
       }
 
-      // Process each oborIdno in the oborInfo array
+      // Zpracování dat pro každý obor
       for (const oborItem of obor.oborInfo) {
         if (!oborItem.oborIdno) {
-          console.error(`Missing oborIdno in file: ${file}`);
-          continue; // Skip to the next oborItem
+          console.error(`oborIdno nebylo nalezeno pro obor: ${file}`);
+          continue; 
         }
 
         const oborIdno = oborItem.oborIdno;
         const apiUrl = `https://stagservices.upol.cz/ws/services/rest2/predmety/getPredmetyByObor?oborIdno=${oborIdno}&outputFormat=JSON`;
-
-        // Fetch the data from the endpoint
         const response = await axios.get(apiUrl);
+        const savePath = path.join(studyPlansDirPath, `${oborIdno}_studijni_plan.json`);
 
-        // Construct the file path for saving the data
-        const savePath = path.join(studijniPlanyDir, `${oborIdno}_studijni_plan.json`);
-
-        // Save the fetched data to the file
+        // Uložení dat studijního plánu
         await fs.writeFile(savePath, JSON.stringify(response.data, null, 2), 'utf8');
 
-        console.log(`Data for oborIdno ${oborIdno} saved to ${savePath}`);
+        console.log(`Data byla uložena pro obor s ID: ${oborIdno}`);
       }
     }
   } catch (error) {
-    console.error('Error loading and saving obor data:', error);
+    console.error(`Chyba při ukládání detailu programu pro program s ID: ${oborIdno}`, error);
   }
 }
-
-loadAndSaveOborData();
