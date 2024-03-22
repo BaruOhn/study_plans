@@ -1,42 +1,49 @@
-let selectedTypeFilters = ["Bakalářský"]; 
+let selectedTypeFilters = ["Bakalářský"];
 let selectedFormFilters = ["Prezenční"];
-let selectedLangFilters = ["Čeština"]; 
+let selectedLangFilters = ["Čeština"];
 
 document.addEventListener('DOMContentLoaded', () => {
   // Obnovíme filtry ze sessionStorage
   selectedTypeFilters = JSON.parse(sessionStorage.getItem('selectedTypeFilters')) || ["Bakalářský"];
   selectedFormFilters = JSON.parse(sessionStorage.getItem('selectedFormFilters')) || ["Prezenční"];
   selectedLangFilters = JSON.parse(sessionStorage.getItem('selectedLangFilters')) || ["Čeština"];
-  const savedSearchQuery = sessionStorage.getItem('searchQuery') || '';
   
+  // Obnovíme vyhledávací dotaz ze sessionStorage
+  const savedSearchQuery = sessionStorage.getItem('searchQuery') || '';
   document.querySelector('#search-input').value = savedSearchQuery;
 
+  // Nastavení funkcí pro vyhledávání a filtry
   setupSearchForm();
+  setupSearchIconClick();
   setupFilterButtons('.filter-btn-type', selectedTypeFilters);
   setupFilterButtons('.filter-btn-form', selectedFormFilters);
   setupFilterButtons('.filter-btn-lang', selectedLangFilters);
-  setupSearchIconClick();
-  
+
   // Načteme data s obnovenými filtry a vyhledávacím dotazem
   fetchProgramData('PRF', savedSearchQuery);
+  getLastUpdateDate();
 });
 
-
+// Nastavení vyhledávacího formuláře
 function setupSearchForm() {
   document.querySelector('#search-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const searchQuery = document.querySelector('#search-input').value;
-    fetchProgramData('PRF', searchQuery); 
-  });
-}
-
-function setupSearchIconClick() {
-  document.querySelector('#search-icon').addEventListener('click', () => {
-    const searchQuery = document.querySelector('#search-input').value;
+    saveFiltersToSessionStorage(); 
     fetchProgramData('PRF', searchQuery);
   });
 }
 
+// Nastavení kliknutí na ikonu vyhledávání (pro mobilní zařízení)
+function setupSearchIconClick() {
+  document.querySelector('#search-icon').addEventListener('click', () => {
+    const searchQuery = document.querySelector('#search-input').value;
+    saveFiltersToSessionStorage(); 
+    fetchProgramData('PRF', searchQuery);
+  });
+}
+
+// Nastavení tlačítek filtrů
 function setupFilterButtons(selector, selectedFilters) {
   document.querySelectorAll(selector).forEach(btn => {
     const filterValue = btn.getAttribute('data-filter');
@@ -74,6 +81,7 @@ function toggleButtonActiveState(button, isActive) {
   }
 }
 
+// Načte data o studijních programech z JSON souboru
 function fetchProgramData(faculty, searchQuery = '') {
   const filePath = `/data/${faculty}/${faculty}_studijni_programy.json`;
   fetch(filePath)
@@ -82,6 +90,7 @@ function fetchProgramData(faculty, searchQuery = '') {
     .catch(error => console.error('Chyba při načítání dat:', error));
 }
 
+// Filtruje programy podle zadaného vyhledávacího dotazu
 function filterPrograms(data, query) {
   return Object.fromEntries(Object.entries(data).map(([programType, programs]) => [
     programType,
@@ -96,20 +105,18 @@ function filterPrograms(data, query) {
         return Math.min(min, ...distances);
       }, Infinity);
 
-      // Pokud je vzdálenost menší nebo rovna 5, program se zobrazí
       const maxDistance = 3;
-
       return minDistance <= maxDistance;
     }))
   ]));
 }
 
+// Pomocná funkce pro výpočet Levenshteinovy vzdálenosti
 function getLevenshteinDistance(a, b) {
   const m = a.length;
   const n = b.length;
   const dp = [];
 
-  // Inicializace DP tabulky
   for (let i = 0; i <= m; i++) {
     dp[i] = [];
     for (let j = 0; j <= n; j++) {
@@ -117,17 +124,16 @@ function getLevenshteinDistance(a, b) {
     }
   }
 
-  // Výpočet vzdálenosti
   for (let i = 1; i <= m; i++) {
     for (let j = 1; j <= n; j++) {
       dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + (a[i - 1] !== b[j - 1]));
     }
   }
 
-  // Výsledek (vzdálenost) je v pravém dolním rohu tabulky 
   return dp[m][n];
 }
 
+// Filtruje programy podle zvolených tlačítek filtrů
 function filterProgramsByCriteria(allPrograms, selectedFilters, criteriaKey) {
   let programsAfterFiltering = {};
 
@@ -170,9 +176,11 @@ function displayProgramData(data, faculty) {
       let filteredByForm = filterProgramsByCriteria(programData, selectedFormFilters, 'forma');
       let filteredByLanguage = filterProgramsByCriteria(filteredByForm, selectedLangFilters, 'jazyk');
 
+      // Pokud existují nějaké programy po filtraci, zavolá se funkce pro vytvoření karty
       if (Object.keys(filteredByLanguage).length > 0) {
         createCardForProgramType(programsContainer, filteredByLanguage, programType, faculty);
       } else {
+        // Jinak se vytvoří prázdná karta s informací o neúspěšném vyhledání
         createCardForProgramType(programsContainer, {}, programType, faculty);
       }
     }
@@ -253,3 +261,20 @@ function createTableForPrograms(programs, faculty) {
   table.appendChild(tbody);
   return table;
 }
+
+// Získá datum poslední aktualizace dat a zobrazí ho na stránce
+function getLastUpdateDate() {
+  fetch('/last-update')
+    .then(response => response.json())
+    .then(data => {
+      const updateDate = new Date(data.lastUpdate);
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const lastUpdateDateStr = updateDate.toLocaleDateString('cs-CZ', options);
+
+      document.getElementById('last-update').textContent += lastUpdateDateStr;
+    })
+    .catch(error => {
+      console.error('Chyba při získávání data poslední aktualizace:', error);
+    });
+}
+

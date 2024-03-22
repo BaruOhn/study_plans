@@ -1,8 +1,52 @@
 const puppeteer = require('puppeteer');
 const express = require('express');
+const cron = require('node-cron');
 const path = require('path');
 const app = express();
 const port = 3000;
+
+let lastUpdateDate = null;
+const fetchProgramsData = require('./server/scripts/load_programs_data');
+const fetchProgramDetails = require('./server/scripts/load_program_detail_data');
+const fetchOborData = require('./server/scripts/load_study_plans_data');
+const fetchSubjectData = require('./server/scripts/load_subjects_data');
+
+// Načtení dat studijních programů v 00:00 každý den
+cron.schedule('0 0 * * *', () => {
+    console.log('Stahuji data studijních programů...');
+    fetchProgramsData();
+    lastUpdateDate = new Date();
+}, {
+    scheduled: true,
+    timezone: 'Europe/Prague'
+});
+
+// Načtení detailů studijních programů v 1:00 každý den
+cron.schedule('0 1 * * *', () => {
+    console.log('Stahuji detaily studijních programů (obory)...');
+    fetchProgramDetails();
+}, {
+    scheduled: true,
+    timezone: 'Europe/Prague'
+});
+
+// Načtení dat oborů v 2:00 každý den
+cron.schedule('0 2 * * *', () => {
+    console.log('Stahuji data oborů...');
+    fetchOborData();
+}, {
+    scheduled: true,
+    timezone: 'Europe/Prague'
+});
+
+// Načtení dat předmětů v 3:00 každý den
+cron.schedule('0 3 * * *', () => {
+    console.log('Stahuji data o předmětech...');
+    fetchSubjectData();
+}, {
+    scheduled: true,
+    timezone: 'Europe/Prague'
+});
 
 // Nastavení cesty pro statické soubory
 app.use(express.static(path.join(__dirname, 'client')));
@@ -12,18 +56,23 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'client/index.html'));
 });
 
+// Endpoint pro získání data poslední aktualizace
+app.get('/last-update', (req, res) => {
+    res.json({ lastUpdate: lastUpdateDate });
+});
+
 // Endpoint pro získání dat studijních programů
 app.get('/data/:faculty/:faculty_studijni_programy.json', (req, res) => {
     const facultyParam = req.params.faculty_studijni_programy.split('_')[0];
-    
+
     if (!facultyParam) {
         return res.status(400).send('Faculty parameter is missing in the request');
     }
-    
+
     const faculty = facultyParam.toUpperCase();
     const filePath = path.join(__dirname, `server/data/${faculty}`, `${faculty}_studijni_programy.json`);
-    
-    res.sendFile(filePath, function(err) {
+
+    res.sendFile(filePath, function (err) {
         if (err) {
             return res.status(404).send('Nelze najít soubor: ' + filePath);
         }
@@ -35,8 +84,8 @@ app.get('/data/:faculty/obory/:stprIdno', (req, res) => {
     const faculty = req.params.faculty;
     const stprIdno = req.params.stprIdno;
     const filePath = path.join(__dirname, `server/data/${faculty}/obory`, `${stprIdno}_obory.json`);
-    
-    res.sendFile(filePath, function(err) {
+
+    res.sendFile(filePath, function (err) {
         if (err) {
             return res.status(404).send('Nelze najít soubor: ' + filePath);
         }
@@ -48,8 +97,8 @@ app.get('/data/:faculty/studijni_plany/:oborIdno', (req, res) => {
     const faculty = req.params.faculty;
     const oborIdno = req.params.oborIdno;
     const filePath = path.join(__dirname, `server/data/${faculty}/studijni_plany`, `${oborIdno}_studijni_plan.json`);
-    
-    res.sendFile(filePath, function(err) {
+
+    res.sendFile(filePath, function (err) {
         if (err) {
             return res.status(404).send('Nelze najít soubor: ' + filePath);
         }
@@ -62,8 +111,8 @@ app.get('/data/:faculty/predmety/:department/:acronym', (req, res) => {
     const acronym = req.params.acronym;
     const faculty = req.params.faculty;
     const filePath = path.join(__dirname, `server/data/${faculty}/predmety`, `${department}_${acronym}.json`);
-    
-    res.sendFile(filePath, function(err) {
+
+    res.sendFile(filePath, function (err) {
         if (err) {
             return res.status(404).send('Nelze najít soubor: ' + filePath);
         }
@@ -73,7 +122,7 @@ app.get('/data/:faculty/predmety/:department/:acronym', (req, res) => {
 app.get('/generate_pdf', async (req, res) => {
     // Příjem parametrů z query
     const { oborIdno, faculty, stprIdno } = req.query;
-    
+
     if (!oborIdno || !faculty || !stprIdno) {
         return res.status(400).send('Chybějící parametry.');
     }
