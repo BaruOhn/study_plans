@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 const defaultTheme = require('tailwindcss/defaultTheme')
+const { screens } = require('tailwindcss/defaultTheme')
 
 module.exports = {
   content: ["./client/**/*.{html,js}"],
@@ -32,7 +33,8 @@ module.exports = {
         },
       },
       screens: {
-        print: {raw: 'print'},
+        'xs': '475px',
+        ...screens,
       },
     },
   },

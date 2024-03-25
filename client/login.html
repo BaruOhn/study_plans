@@ -13,7 +13,13 @@
 
 <body class="bg-bg-gray-light">
     <header class="bg-sky-700 px-7 py-4 md:px-8">
+        <div class="flex justify-between items-center">
             <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
+            <div class="flex items-center gap-4">
+                <button class="text-white border-white border rounded-full px-4 py-2 hidden md:flex items-center"><a href="about_app.html" class="flex items-center"><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</a></button>
+                <button class="border border-white rounded-full px-4 py-2 md:hidden"><a href="about_app.html"><i class="fas fa-info-circle text-white text-xl"></i></a></button>
+            </div>
+        </div>
     </header>
 
     <main class="flex justify-center items-center">
@@ -30,6 +36,8 @@
             </article>
         </section>
     </main>
+
+    <script src="js/login.js"></script>
 </body>
 
 </html>

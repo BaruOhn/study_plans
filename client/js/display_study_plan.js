@@ -117,10 +117,10 @@ function createSectionForYear(rocnik) {
         <h4 class="text-lg font-extrabold text-gray-800/80 mt-4 print:text-base">${rocnik}. ročník</h4>
         <div class="flex flex-wrap justify-center">
             <div id="${rocnik}RocnikZimniSemestr" class="rocnikContainer mr-0.5 mb-8">
-                <h5 class="text-sm text-gray-700 italic -mt-1 mb-3 print:text-xs">zimní semestr</h5>
+                <h5 class="text-sm text-gray-700 italic mt-0 mb-1 print:text-xs">zimní semestr</h5>
             </div>
             <div id="${rocnik}RocnikLetniSemestr" class="rocnikContainer mb-8">
-                <h5 class="text-sm text-gray-700 italic -mt-1 mb-3 print:text-xs">letní semestr</h5>
+                <h5 class="text-sm text-gray-700 italic mt-0 mb-1 print:text-xs">letní semestr</h5>
             </div>
         </div>
     `;
