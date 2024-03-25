@@ -42,3 +42,5 @@ async function fetchOborData() {
     console.error(`Chyba při ukládání detailu programu pro program s ID: ${oborIdno}`, error);
   }
 }
+
+module.exports = fetchOborData;

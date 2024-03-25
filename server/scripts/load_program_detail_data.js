@@ -3,7 +3,8 @@ const axios = require('axios');
 const fs = require('fs').promises;
 
 // Funkce pro načtení oborů studijních programů
-async function fetchProgramDetails(faculty) {
+async function fetchProgramDetails() {
+  const faculty = 'PRF';
   const facultyDataPath = path.join(__dirname, '..', 'data', faculty, `${faculty}_studijni_programy.json`);
   try {
     // Načtení dat studijních programů
@@ -39,3 +40,5 @@ async function saveProgramDetails(faculty, stprIdno) {
     console.error(`Chyba při ukládání detailů pro stprIdno ${stprIdno}:`, error);
   }
 }
+
+module.exports = fetchProgramDetails;

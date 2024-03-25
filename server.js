@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const express = require('express');
+const fs = require('fs').promises;
 const cron = require('node-cron');
 const path = require('path');
 const app = express();
@@ -12,37 +13,56 @@ const fetchOborData = require('./server/scripts/load_study_plans_data');
 const fetchSubjectData = require('./server/scripts/load_subjects_data');
 
 // Načtení dat studijních programů v 00:00 každý den
-cron.schedule('0 0 * * *', () => {
-    console.log('Stahuji data studijních programů...');
-    fetchProgramsData();
-    lastUpdateDate = new Date();
+cron.schedule('0 0 * * *', async () => {
+    try {
+        console.log('Stahuji data studijních programů...');
+        await fetchProgramsData();
+        lastUpdateDate = new Date();
+    } catch (error) {
+        console.error('Došlo k chybě při stahování dat studijních programů:', error);
+    }
 }, {
     scheduled: true,
     timezone: 'Europe/Prague'
 });
 
 // Načtení detailů studijních programů v 1:00 každý den
-cron.schedule('0 1 * * *', () => {
-    console.log('Stahuji detaily studijních programů (obory)...');
-    fetchProgramDetails();
+cron.schedule('0 1 * * *', async () => {
+    try {
+        console.log('Stahuji detaily studijních programů...');
+        await fetchProgramDetails();
+        console.log('Data s detaily studijních programů byla úspěšně stažena.');
+    } catch (error) {
+        console.error('Došlo k chybě při stahování detailů studijních programů:', error);
+    }
 }, {
     scheduled: true,
     timezone: 'Europe/Prague'
 });
 
-// Načtení dat oborů v 2:00 každý den
-cron.schedule('0 2 * * *', () => {
-    console.log('Stahuji data oborů...');
-    fetchOborData();
+// Načtení dat studijních plánů v 2:00 každý den
+cron.schedule('0 2 * * *', async () => {
+    try {
+        console.log('Stahuji data studijních plánů...');
+        await fetchOborData();
+        console.log('Data studijních plánů byla úspěšně stažena.');
+    } catch (error) {
+        console.error('Došlo k chybě při stahování dat studijních plánů:', error);
+    }
 }, {
     scheduled: true,
     timezone: 'Europe/Prague'
 });
 
 // Načtení dat předmětů v 3:00 každý den
-cron.schedule('0 3 * * *', () => {
-    console.log('Stahuji data o předmětech...');
-    fetchSubjectData();
+cron.schedule('0 3 * * *', async () => {
+    try {
+        console.log('Stahuji data předmětů...');
+        await fetchSubjectData();
+        console.log('Data předmětů byla úspěšně stažena.');
+    } catch (error) {
+        console.error('Došlo k chybě při stahování dat předmětů:', error);
+    }
 }, {
     scheduled: true,
     timezone: 'Europe/Prague'
