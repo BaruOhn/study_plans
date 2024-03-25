@@ -37,3 +37,5 @@ async function fetchSubjectData() {
     console.error('Chyba při načítání dat předmětů:', error);
   }
 }
+
+module.exports = fetchSubjectData;

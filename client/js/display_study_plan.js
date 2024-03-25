@@ -138,20 +138,20 @@ function createSectionForHelper() {
     const section = document.createElement('section');
     section.innerHTML = `
         <div class="mx-2 sm:mx-6 mt-6 sm:mt-24 mb-12 print:mx-2">
-            <p class="text-sm text-gray-800 w-4/5">Za celé studium musí studenti získat ${credits} kreditů. Kromě uvedených předmětů
+            <p class="text-sm print:text-xs text-gray-800 w-4/5">Za celé studium musí studenti získat ${credits} kreditů. Kromě uvedených předmětů
                 si mohou vybírat také z bohaté nabídky předmětů dalších kateder.</p>
             <div class="text-gray-700 italic">
                 <div class="flex items-center mt-2">
                     <div class="w-5 h-5 bg-sky-500/50 mr-2"></div>
-                    <p class="text-sm">povinné předměty</p>
+                    <p class="text-sm print:text-xs">povinné předměty</p>
                 </div>
                 <div class="flex items-center mt-2">
                     <div class="w-5 h-5 bg-amber-400/50 mr-2"></div>
-                    <p class="text-sm">povinně volitelné předměty</p>
+                    <p class="text-sm print:text-xs">povinně volitelné předměty</p>
                 </div>
                 <div class="flex items-center mt-2">
                     <div class="w-5 h-5 bg-red-400/50 mr-2"></div>
-                    <p class="text-sm">volitelné předměty</p>
+                    <p class="text-sm print:text-xs">volitelné předměty</p>
                 </div>
             </div>
         </div>

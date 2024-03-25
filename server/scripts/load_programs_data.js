@@ -37,3 +37,5 @@ async function fetchProgramsData() {
     console.error('Chyba při načítání nebo ukládání dat programu pro fakultu PRF:', error);
   }
 }
+
+module.exports = fetchProgramsData;
