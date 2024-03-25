@@ -14,10 +14,15 @@
     <header class="bg-sky-700 px-7 md:px-8 print:hidden">
         <div class="flex justify-between items-center">
             <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
-            <button class="text-white border-white border rounded-full px-4 py-2 hidden md:block"><a href="login.html"><i class="fas fa-user mr-2"></i>Přihlásit se</a></button>
-            <button class="border border-white rounded-full px-4 py-2 md:hidden"><a href="login.html"><i class="fas fa-user text-white text-xl"></i></a></button>
+            <div class="flex items-center gap-4">
+                <button class="text-white border-white border rounded-full px-4 py-2 hidden md:flex items-center"><a href="login.html" class="flex items-center"><i class="fas fa-user text-white mr-2"></i>Přihlásit se</a></button>
+                <button class="border border-white rounded-full px-4 py-2 md:hidden"><a href="login.html"><i class="fas fa-user text-white text-xl"></i></a></button>
+                <button class="text-white border-white border rounded-full px-4 py-2 hidden md:flex items-center"><a href="about_app.html" class="flex items-center"><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</a></button>
+                <button class="border border-white rounded-full px-4 py-2 md:hidden"><a href="about_app.html"><i class="fas fa-info-circle text-white text-xl"></i></a></button>
+            </div>
         </div>
     </header>
+    
     <section class="mx-6 sm:mx-9 print:mx-6">
         <div class="flex flex-wrap justify-between">
             <div>
@@ -26,7 +31,7 @@
             </div>
             <button id="download-pdf" class="text-gray-700 print:hidden mt-7"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-file text-gray-700 mr-2"></i>Stáhnout PDF</button>
         </div>
-        <h3 class="text-gray-700 font-bold text-xl mt-7 program-form print:text-base"></h3>
+        <h3 class="text-gray-700/95 font-bold text-xl mt-7 program-form print:text-base"></h3>
     </section>
     <main class="mx-4">
         <div id="content" class="flex flex-wrap justify-center w-full"></div>

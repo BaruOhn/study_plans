@@ -40,7 +40,7 @@ function displayData(data, faculty, stprIdno) {
   data.oborInfo.forEach(obor => {
     const card = document.createElement('a'); 
     card.href = `study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}`; // Přidání odkazu na celou kartu
-    card.className = 'border border-t-0 border-solid border-gray-300 rounded-t-none rounded-b mb-8 p-4 sm:p-6 w-full max-w-xs sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-6xl 2xl:max-w-7xl shadow-md hover:shadow-lg transition-shadow';
+    card.className = 'border border-t-0 border-solid border-gray-300 rounded-t-none rounded-b mx-4 mb-8 p-4 sm:p-6 w-full max-w-xs xs:max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-6xl 2xl:max-w-7xl shadow-md hover:shadow-lg transition-shadow';
     card.addEventListener('mouseenter', () => { card.classList.add('shadow-lg') });
     card.addEventListener('mouseleave', () => { card.classList.remove('shadow-lg') });
 
@@ -61,7 +61,7 @@ function displayData(data, faculty, stprIdno) {
     `;
 
     const border = document.createElement('div');
-    border.className = 'bg-sky-700/90 h-2 w-full max-w-xs sm:max-w-lg md:max-w-2xl lg:max-w-4xl xl:max-w-6xl 2xl:max-w-7xl rounded-t rounded-b-none mx-auto';
+    border.className = 'bg-sky-700/90 h-2 w-full max-w-xs xs:max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-6xl 2xl:max-w-7xl rounded-t rounded-b-none';
 
     // Append the header, link and body to the card
     card.appendChild(cardHeader);

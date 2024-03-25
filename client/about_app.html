@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="cs">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>O aplikaci</title>
+        <link href="css/styles.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/94bfb75d9d.js" crossorigin="anonymous"></script>
+    </head>
+<body class="flex flex-col min-h-screen">
+    <header class="bg-sky-700 px-7 py-4 md:px-8">
+        <div class="flex justify-between items-center">
+            <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
+            <button class="text-white border-white border rounded-full px-4 py-2 hidden md:block"><a href="login.html"><i class="fas fa-user mr-2"></i>Přihlásit se</a></button>
+            <button class="border border-white rounded-full px-4 py-2 md:hidden"><a href="login.html"><i class="fas fa-user text-white text-xl"></i></a></button>
+        </div>
+    </header>
+
+    <section class="flex-grow px-7 py-4">
+        <h2 class="text-sky-700 font-bold text-2xl my-8 program-name print:text-xl">O aplikaci</h2>
+        <div>
+            <h3 class="text-gray-700/95 font-semibold text-lg">Autor</h3>
+            <p class="text-gray-700 mb-4">Barbora Ohnoutková</p>
+            <h3 class="text-gray-700/95 font-semibold text-lg">Ve spolupráci s</h3>
+            <p class="text-gray-700 mb-4">Katedra Informatiky, Univerzita Palackého v Olomouci</p>
+            <h3 class="text-gray-700/95 font-semibold text-lg">Popis</h3>
+            <p class="text-gray-700">Aplikace vznikla v rámci bakalářské práce a slouží k vizualizaci studijních programů realizovaných na Univerzitě Palackého v Olomouci a jejich studijních plánů.</p> 
+            <p class="text-gray-700 mb-4">Data jsou získávána z API informačního systému STAG.</p>
+        </div>
+        <button id="back-btn" class="text-gray-700"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2 mt-4"></i>Zpět</a></button>
+    </section>
+
+    <footer>
+        <div class="bg-sky-700 text-white text-center py-4">
+            <p>&copy; 2024 Barbora Ohnoutková, KI, UPOL</p>
+        </div>
+    </footer>
+
+    <script src="js/display_about_app.js"></script>
+</body>
+</html>
