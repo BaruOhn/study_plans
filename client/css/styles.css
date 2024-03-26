@@ -543,8 +543,14 @@ video {
 .top-0 {
   top: 0px;
 }
+.z-10 {
+  z-index: 10;
+}
 .m-2 {
   margin: 0.5rem;
+}
+.m-8 {
+  margin: 2rem;
 }
 .mx-2 {
   margin-left: 0.5rem;
@@ -558,28 +564,18 @@ video {
   margin-left: 1.5rem;
   margin-right: 1.5rem;
 }
-.mx-8 {
-  margin-left: 2rem;
-  margin-right: 2rem;
-}
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
 }
-.my-0 {
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-.my-0\.5 {
-  margin-top: 0.125rem;
-  margin-bottom: 0.125rem;
-}
-.my-8 {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-}
 .-ml-2 {
   margin-left: -0.5rem;
+}
+.mb-0 {
+  margin-bottom: 0px;
+}
+.mb-0\.5 {
+  margin-bottom: 0.125rem;
 }
 .mb-1 {
   margin-bottom: 0.25rem;
@@ -680,8 +676,8 @@ video {
 .w-60 {
   width: 15rem;
 }
-.w-\[54\] {
-  width: 54;
+.w-\[218px\] {
+  width: 218px;
 }
 .w-full {
   width: 100%;
@@ -719,6 +715,9 @@ video {
 .cursor-pointer {
   cursor: pointer;
 }
+.flex-row {
+  flex-direction: row;
+}
 .flex-col {
   flex-direction: column;
 }
@@ -736,6 +735,16 @@ video {
 }
 .gap-4 {
   gap: 1rem;
+}
+.space-x-0 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0px * var(--tw-space-x-reverse));
+  margin-left: calc(0px * calc(1 - var(--tw-space-x-reverse)));
+}
+.space-x-0\.5 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.125rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.125rem * calc(1 - var(--tw-space-x-reverse)));
 }
 .space-x-1 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-x-reverse: 0;
@@ -1091,6 +1100,10 @@ video {
     margin-bottom: 0px;
   }
 
+  .sm\:ml-3 {
+    margin-left: 0.75rem;
+  }
+
   .sm\:mr-4 {
     margin-right: 1rem;
   }
@@ -1129,10 +1142,6 @@ video {
   }
 }
 @media (min-width: 768px) {
-
-  .md\:block {
-    display: block;
-  }
 
   .md\:flex {
     display: flex;
@@ -1258,6 +1267,10 @@ video {
     margin-right: 1.5rem;
   }
 
+  .print\:ml-0 {
+    margin-left: 0px;
+  }
+
   .print\:hidden {
     display: none;
   }
@@ -1270,8 +1283,8 @@ video {
     width: 6rem;
   }
 
-  .print\:w-\[30\] {
-    width: 30;
+  .print\:w-\[118px\] {
+    width: 118px;
   }
 
   .print\:px-2 {

@@ -34,19 +34,14 @@ function generatePdf(oborIdno, faculty, stprIdno, programName) {
         throw new Error('Něco se nepovedlo při generování PDF.');
     })
     .then(blob => {
-        // Vytvoření URL z blobu
         const url = window.URL.createObjectURL(blob);
-        // Vytvoření nového odkazu pro stažení
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
-        // Doporučení názvu souboru
         a.download = `${programName}_studijni_plan.pdf`.replace(/ /g,"_");
-        // Přidání odkazu do dokumentu
+        
         document.body.appendChild(a);
-        // Simulace kliknutí pro stažení
         a.click();
-        // Odstranění odkazu po stažení
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
     })
@@ -62,14 +57,9 @@ async function fetchProgramDetail(faculty, oborIdno, stprIdno) {
     const studyPlanPath = `/data/${faculty}/studijni_plany/${oborIdno}`;
 
     const oborData = await fetchData(studyProgramPath);
-
-    // Převedení oborIdno na číslo (v url string, ale v datech číslo)
     const oborIdnoNum = parseInt(oborIdno, 10);
-
-    // Najděte správný obor podle oborIdno
     const selectedObor = oborData.oborInfo.find(obor => obor.oborIdno === oborIdnoNum);
 
-    // Aktualizujte záhlaví stránky správným oborem
     if (selectedObor) {
         updatePageHeadings(selectedObor);
     } else {
@@ -159,79 +149,83 @@ function createSectionForHelper() {
     return section;
 }
 
-function displayData(data, faculty) {
-    // Najdeme hlavní element pro vložení obsahu 
-    const mainContent = document.getElementById('content');
+function createSectionForUnassignedSubjects() {
+    const section = document.createElement('section');
+    section.classList.add('m-2');
+    section.innerHTML = `
+        <h4 class="text-lg font-extrabold text-gray-800/80 mt-4 sm:ml-3 mb-4 print:text-sm print:ml-0">Předměty mimo studijní plán</h4>
+        <div>
+            <div class="unassigned-subjects-container flex flex-row flex-wrap justify-center space-x-0.5">
+                <!-- Zde budou přidány předměty -->
+            </div>
+        </div>
+    `;
+    return section;
+}
 
-    // Kontrola, zda pole predmetOboru obsahuje nějaké předměty
+function displayData(data, faculty) {
+    const mainContent = document.getElementById('main-content');
+    const unassignedSubjectsSection = createSectionForUnassignedSubjects();
+    const unassignedSubjectsContainer = unassignedSubjectsSection.querySelector('.unassigned-subjects-container');
+
     if (data.predmetOboru.length === 0) {
-        // Zobrazení zprávy, že nejsou dostupné žádné předměty
         const noDataMessage = document.createElement('div');
         noDataMessage.textContent = 'Pro vybraný studijní plán nejsou ve STAGu k dispozici žádné předměty.';
         noDataMessage.classList.add('text-gray-800', 'text-lg', 'font-semibold', 'mt-12', 'text-center', 'w-full', 'mx-auto');
         mainContent.appendChild(noDataMessage);
-
     } else {
-        // Filtrujeme předměty s 0 kredity a odstraníme duplikáty předmětů
         const uniquePredmety = Array.from(new Map(data.predmetOboru.filter(predmet => predmet.kreditu > 0).map(predmet => [predmet.nazev, predmet])).values());
 
-        // Rozdělení předmětů podle statutu
-        let predmetyPodleStatutu = {
-            "A": [],
-            "B": [],
-            "C": []
-        };
+        let predmetyPodleStatutu = { "A": [], "B": [], "C": [] };
         uniquePredmety.forEach(predmet => {
             predmetyPodleStatutu[predmet.statut].push(predmet);
         });
 
-        // Řazení předmětů v každé skupině podle názvu
         Object.keys(predmetyPodleStatutu).forEach(statut => {
             predmetyPodleStatutu[statut].sort((a, b) => a.nazev.localeCompare(b.nazev));
         });
 
-        // Určení počtu ročníků na základě typu studia
-        let pocetRocniku;
-        if (oborTyp === 'bakalářský' || oborTyp === 'doktorský') {
-            pocetRocniku = 3;
-        } else if (oborTyp === 'navazující') {
-            pocetRocniku = 2;
-        } else {
-            pocetRocniku = 3; // Výchozí hodnota pro neznámý typ
-        }
+        let pocetRocniku = (oborTyp === 'bakalářský' || oborTyp === 'doktorský') ? 3 : 2; 
 
-        // Vytvoření sekce pro každý ročník
         for (let rocnik = 1; rocnik <= pocetRocniku; rocnik++) {
-            const section = createSectionForYear(rocnik);
-            mainContent.appendChild(section);
+            // Zkontrolujeme, zda pro daný ročník existují nějaké předměty
+            const maZimniSemestrPredmety = uniquePredmety.some(predmet => predmet.doporucenyRocnik === rocnik && predmet.vyukaZS === 'A');
+            const maLetniSemestrPredmety = uniquePredmety.some(predmet => predmet.doporucenyRocnik === rocnik && predmet.vyukaZS === 'B');
+            if (maZimniSemestrPredmety || maLetniSemestrPredmety) {
+                // Pokud pro daný ročník existují předměty, vytvoříme pro něj sekci
+                mainContent.appendChild(createSectionForYear(rocnik));
+            }
         }
 
-        // Přidání předmětů do odpovídajících sekcí
         Object.values(predmetyPodleStatutu).forEach(skupina => {
             skupina.forEach(predmet => {
-                const bgColorClass = predmet.statut === "A" ? 'bg-sky-500/50' : predmet.statut === "B" ? 'bg-amber-400/50' : 'bg-red-400/50';
-                const predmetHTML = `
-                <a href="subject_detail.html?faculty=${faculty}&department=${predmet.katedra}&acronym=${predmet.zkratka}" class="block ${bgColorClass} my-0.5">
-                        <div class="flex items-center h-12 w-[54] print:w-[30] print:h-8 justify-between font-sans px-4 py-6 print:px-2 print:py-4">
-                            <div class="text-sm font-normal line-clamp-3 leading-tight w-44 print:text-[8px] print:w-24">${predmet.nazev}</div>
-                            <div class="text-sm font-light italic text-gray-700 print:text-[8px]">${predmet.kreditu}</div>
-                        </div>
-                    </a>`;
-
-                const rocnik = predmet.doporucenyRocnik;
-                const semestr = predmet.vyukaZS === 'A' ? 'Zimni' : 'Letni';
-                const targetId = `${rocnik}Rocnik${semestr}Semestr`;
-
-                const container = document.getElementById(targetId);
-                if (container) {
-                    container.innerHTML += predmetHTML;
+                const predmetHTML = generatePredmetHTML(predmet, faculty); 
+                if (predmet.doporucenyRocnik === null || predmet.doporucenySemestr === null) {
+                    unassignedSubjectsContainer.innerHTML += predmetHTML; 
+                } else {
+                    const targetId = `${predmet.doporucenyRocnik}Rocnik${predmet.vyukaZS === 'A' ? 'Zimni' : 'Letni'}Semestr`;
+                    const container = document.getElementById(targetId);
+                    if (container) container.innerHTML += predmetHTML;
                 }
             });
         });
 
-        const sectionHelp = createSectionForHelper();
-        const mainElement = document.querySelector('main');
-        // Přidání sekce s nápovědou
-        mainElement.appendChild(sectionHelp)
+        mainContent.appendChild(unassignedSubjectsSection);
+        mainContent.appendChild(createSectionForHelper()); // Přidání sekce s nápovědou
     }
 }
+
+
+function generatePredmetHTML(predmet, faculty) {
+    const bgColorClass = predmet.statut === "A" ? 'bg-sky-500/50' : predmet.statut === "B" ? 'bg-amber-400/50' : 'bg-red-400/50';
+    return `
+        <a href="subject_detail.html?faculty=${faculty}&department=${predmet.katedra}&acronym=${predmet.zkratka}" class="block ${bgColorClass} mb-0.5">
+            <div class="flex items-center h-12 w-[218px] print:w-[118px] print:h-8 justify-between font-sans px-4 py-6 print:px-2 print:py-4">
+                <div class="text-sm font-normal line-clamp-3 leading-tight w-44 print:text-[8px] print:w-24">${predmet.nazev}</div>
+                <div class="text-sm font-light italic text-gray-700 print:text-[8px]">${predmet.kreditu}</div>
+            </div>
+        </a>
+    `;
+}
+
+

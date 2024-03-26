@@ -11,59 +11,61 @@
     <script src="https://kit.fontawesome.com/94bfb75d9d.js" crossorigin="anonymous"></script>
 </head>
 
-<body>
-    <header class="bg-sky-700 px-7 md:px-8">
-        <div class="flex justify-between items-center">
-            <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
-            <div class="flex items-center gap-4">
-                <button class="text-white border-white border rounded-full px-4 py-2 hidden md:flex items-center"><a href="login.html" class="flex items-center"><i class="fas fa-user text-white mr-2"></i>Přihlásit se</a></button>
-                <button class="border border-white rounded-full px-4 py-2 md:hidden"><a href="login.html"><i class="fas fa-user text-white text-xl"></i></a></button>
-                <button class="text-white border-white border rounded-full px-4 py-2 hidden md:flex items-center"><a href="about_app.html" class="flex items-center"><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</a></button>
-                <button class="border border-white rounded-full px-4 py-2 md:hidden"><a href="about_app.html"><i class="fas fa-info-circle text-white text-xl"></i></a></button>
+<body class="flex flex-col min-h-screen">
+    <div class="flex-grow">
+        <header class="bg-sky-700 px-7 md:px-8">
+            <div class="flex justify-between items-center">
+                <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
+                <div class="flex items-center gap-4">
+                    <button class="text-white border-white border rounded-full px-4 py-2 hidden md:flex items-center"><a href="login.html" class="flex items-center"><i class="fas fa-user text-white mr-2"></i>Přihlásit se</a></button>
+                    <button class="border border-white rounded-full px-4 py-2 md:hidden"><a href="login.html"><i class="fas fa-user text-white text-xl"></i></a></button>
+                    <button class="text-white border-white border rounded-full px-4 py-2 hidden md:flex items-center"><a href="about_app.html" class="flex items-center"><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</a></button>
+                    <button class="border border-white rounded-full px-4 py-2 md:hidden"><a href="about_app.html"><i class="fas fa-info-circle text-white text-xl"></i></a></button>
+                </div>
             </div>
-        </div>
-    </header>
-    
-    <main class="mx-8 my-8">
-        <div class="flex justify-between mb-4">
-            <h2 class="text-sky-700 font-bold text-2xl">Detail předmětu</h2>
-            <button id="close-btn" class="text-gray-700"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-full fas fa-times text-gray-700 mr-2"></i></a></button>
-        </div>
-        <div class="overflow-x-auto py-4">
-            <table class="text-gray-800/90 w-full md:w-auto">
-                <thead>
-                    <tr class="p-4 border-t border-b">
-                        <th class="text-left w-1/5">Zkratka</th>
-                        <th class="text-left w-2/5">Název</th>
-                        <th class="text-center w-1/5">Kredity</th>
-                        <th class="text-center w-1/5 whitespace-pre-line">Rozsah výuky
-                            Př+Cv+Sem</th>
-                        <th class="text-center w-2/5">Zakončení</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b">
-                        <td class="text-left py-3" id="zkratka"></td>
-                        <td class="text-left py-3" id="nazev"></td>
-                        <td class="text-center py-3" id="kredity"></td>
-                        <td class="text-center py-3" id="rozsah"></td>
-                        <td class="text-center py-3" id="zakonceni"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <section>
-            <article class="pt-2 pb-6">
-                <h3 class="text-gray-800/90 font-bold">Anotace kurzu: </h3>
-                <p id="anotace"></p>
-            </article>
-            <article>
-                <h3 class="text-gray-800/90 font-bold">Rámcový obsah kurzu: </h3>
-                <p id="obsah"></p>
-            </article>
-        </section>
-        <button id="back-btn" class="text-gray-700"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2 mt-4"></i>Zpět</a></button>
-    </main>
+        </header>
+        
+        <main class="m-8">
+            <div class="flex justify-between mb-4">
+                <h2 class="text-sky-700 font-bold text-2xl">Detail předmětu</h2>
+                <button id="close-btn" class="text-gray-700"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-full fas fa-times text-gray-700 mr-2"></i></a></button>
+            </div>
+            <div class="overflow-x-auto py-4">
+                <table class="text-gray-800/90 w-full md:w-auto">
+                    <thead>
+                        <tr class="p-4 border-t border-b">
+                            <th class="text-left w-1/5">Zkratka</th>
+                            <th class="text-left w-2/5">Název</th>
+                            <th class="text-center w-1/5">Kredity</th>
+                            <th class="text-center w-1/5 whitespace-pre-line">Rozsah výuky
+                                Př+Cv+Sem</th>
+                            <th class="text-center w-2/5">Zakončení</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b">
+                            <td class="text-left py-3" id="zkratka"></td>
+                            <td class="text-left py-3" id="nazev"></td>
+                            <td class="text-center py-3" id="kredity"></td>
+                            <td class="text-center py-3" id="rozsah"></td>
+                            <td class="text-center py-3" id="zakonceni"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <section>
+                <article class="pt-2 pb-6">
+                    <h3 class="text-gray-800/90 font-bold">Anotace kurzu: </h3>
+                    <p id="anotace"></p>
+                </article>
+                <article>
+                    <h3 class="text-gray-800/90 font-bold">Rámcový obsah kurzu: </h3>
+                    <p id="obsah"></p>
+                </article>
+            </section>
+            <button id="back-btn" class="text-gray-700"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2 mt-4"></i>Zpět</a></button>
+        </main>
+    </div>
 
     <footer class="text-center text-gray-400 px-7 pt-0 pb-8">
         <p id="last-update">Poslední aktualizace dat: </p>

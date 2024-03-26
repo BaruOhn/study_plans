@@ -7,10 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
   selectedTypeFilters = JSON.parse(sessionStorage.getItem('selectedTypeFilters')) || ["Bakalářský"];
   selectedFormFilters = JSON.parse(sessionStorage.getItem('selectedFormFilters')) || ["Prezenční"];
   selectedLangFilters = JSON.parse(sessionStorage.getItem('selectedLangFilters')) || ["Čeština"];
-  
-  // Obnovíme vyhledávací dotaz ze sessionStorage
-  const savedSearchQuery = sessionStorage.getItem('searchQuery') || '';
-  document.querySelector('#search-input').value = savedSearchQuery;
 
   // Nastavení funkcí pro vyhledávání a filtry
   setupSearchForm();
@@ -19,6 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
   setupFilterButtons('.filter-btn-form', selectedFormFilters);
   setupFilterButtons('.filter-btn-lang', selectedLangFilters);
 
+  // Obnovíme vyhledávací dotaz ze sessionStorage
+  const savedSearchQuery = sessionStorage.getItem('searchQuery') || '';
+  document.querySelector('#search-input').value = savedSearchQuery;
+  
   // Načteme data s obnovenými filtry a vyhledávacím dotazem
   fetchProgramData('PRF', savedSearchQuery);
 });

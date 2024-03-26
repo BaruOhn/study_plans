@@ -1,42 +1,46 @@
 <!DOCTYPE html>
 <html lang="cs">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>O aplikaci</title>
-        <link href="css/styles.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <script src="https://kit.fontawesome.com/94bfb75d9d.js" crossorigin="anonymous"></script>
-    </head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O aplikaci</title>
+    <link href="css/styles.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/94bfb75d9d.js" crossorigin="anonymous"></script>
+</head>
+
 <body class="flex flex-col min-h-screen">
-    <header class="bg-sky-700 px-7 py-4 md:px-8">
+    <header class="bg-sky-700 px-7 md:px-8">
         <div class="flex justify-between items-center">
             <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
-            <button class="text-white border-white border rounded-full px-4 py-2 hidden md:block"><a href="login.html"><i class="fas fa-user mr-2"></i>Přihlásit se</a></button>
-            <button class="border border-white rounded-full px-4 py-2 md:hidden"><a href="login.html"><i class="fas fa-user text-white text-xl"></i></a></button>
+            <div class="flex items-center gap-4">
+                <button class="text-white border-white border rounded-full px-4 py-2 hidden md:flex items-center"><a href="login.html" class="flex items-center"><i class="fas fa-user text-white mr-2"></i>Přihlásit se</a></button>
+                <button class="border border-white rounded-full px-4 py-2 md:hidden"><a href="login.html"><i class="fas fa-user text-white text-xl"></i></a></button>
+            </div>
         </div>
     </header>
 
-    <section class="flex-grow px-7 py-4">
-        <h2 class="text-sky-700 font-bold text-2xl my-8 program-name print:text-xl">O aplikaci</h2>
+    <section class="flex-grow m-8">
+        <h2 class="text-sky-700 font-bold text-2xl mb-8">O aplikaci</h2>
         <div>
-            <h3 class="text-gray-700/95 font-semibold text-lg">Autor</h3>
-            <p class="text-gray-700 mb-4">Barbora Ohnoutková</p>
-            <h3 class="text-gray-700/95 font-semibold text-lg">Ve spolupráci s</h3>
-            <p class="text-gray-700 mb-4">Katedra Informatiky, Univerzita Palackého v Olomouci</p>
-            <h3 class="text-gray-700/95 font-semibold text-lg">Popis</h3>
-            <p class="text-gray-700">Aplikace vznikla v rámci bakalářské práce a slouží k vizualizaci studijních programů realizovaných na Univerzitě Palackého v Olomouci a jejich studijních plánů.</p> 
-            <p class="text-gray-700 mb-4">Data jsou získávána z API informačního systému STAG.</p>
+            <h3 class="text-gray-800/90 font-bold">Autor:</h3>
+            <p class="mb-4">Barbora Ohnoutková</p>
+            <h3 class="text-gray-800/90 font-bold">Ve spolupráci s:</h3>
+            <p class="mb-4">Katedra Informatiky, Univerzita Palackého v Olomouci</p>
+            <h3 class="text-gray-800/90 font-bold">Popis:</h3>
+            <p>Aplikace vznikla v rámci bakalářské práce a slouží k vizualizaci studijních programů a jejich studijních plánů realizovaných na Univerzitě Palackého v Olomouci.</p>
+            <p>Data jsou získávána z API informačního systému STAG.</p>
         </div>
-        <button id="back-btn" class="text-gray-700"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2 mt-4"></i>Zpět</a></button>
+        <button id="back-btn" class="text-gray-700 mt-4"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2 mt-4"></i>Zpět</a></button>
     </section>
 
-    <footer>
-        <div class="bg-sky-700 text-white text-center py-4">
-            <p>&copy; 2024 Barbora Ohnoutková, KI, UPOL</p>
-        </div>
+    <footer class="text-center text-gray-400 px-7 pt-0 pb-8">
+        <p id="last-update">Poslední aktualizace dat: </p>
     </footer>
 
     <script src="js/display_about_app.js"></script>
+    <script src="js/last_data_update.js"></script>
 </body>
+
 </html>
