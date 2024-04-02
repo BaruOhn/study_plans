@@ -9,8 +9,9 @@ const port = 3000;
 let lastUpdateDate = null;
 const fetchProgramsData = require('./server/scripts/load_programs_data');
 const fetchProgramDetails = require('./server/scripts/load_program_detail_data');
-const fetchOborData = require('./server/scripts/load_study_plans_data');
+const fetchStudyPlanData = require('./server/scripts/load_study_plans_data');
 const fetchSubjectData = require('./server/scripts/load_subjects_data');
+const fetchPlansBlocksData = require('./server/scripts/load_plans_blocks_data');
 
 // Načtení dat studijních programů v 00:00 každý den
 cron.schedule('0 0 * * *', async () => {
@@ -44,7 +45,7 @@ cron.schedule('0 1 * * *', async () => {
 cron.schedule('0 2 * * *', async () => {
     try {
         console.log('Stahuji data studijních plánů...');
-        await fetchOborData();
+        await fetchStudyPlanData();
         console.log('Data studijních plánů byla úspěšně stažena.');
     } catch (error) {
         console.error('Došlo k chybě při stahování dat studijních plánů:', error);
@@ -62,6 +63,19 @@ cron.schedule('0 3 * * *', async () => {
         console.log('Data předmětů byla úspěšně stažena.');
     } catch (error) {
         console.error('Došlo k chybě při stahování dat předmětů:', error);
+    }
+}, {
+    scheduled: true,
+    timezone: 'Europe/Prague'
+});
+
+cron.schedule('0 4 * * *', async () => {
+    try {
+        console.log('Stahuji data bloků plánu...');
+        await fetchPlansBlocksData();
+        console.log('Data bloků plánu byla úspěšně stažena.');
+    } catch (error) {
+        console.error('Došlo k chybě při stahování dat bloků plánu:', error);
     }
 }, {
     scheduled: true,
@@ -131,6 +145,19 @@ app.get('/data/:faculty/predmety/:department/:acronym', (req, res) => {
     const acronym = req.params.acronym;
     const faculty = req.params.faculty;
     const filePath = path.join(__dirname, `server/data/${faculty}/predmety`, `${department}_${acronym}.json`);
+
+    res.sendFile(filePath, function (err) {
+        if (err) {
+            return res.status(404).send('Nelze najít soubor: ' + filePath);
+        }
+    });
+});
+
+// Endpoint pro získání bloků plánu
+app.get('/data/:faculty/bloky_planu/:stprIdno', (req, res) => {
+    const faculty = req.params.faculty;
+    const stprIdno = req.params.stprIdno;
+    const filePath = path.join(__dirname, `server/data/${faculty}/bloky_planu`, `${stprIdno}_bloky_planu.json`);
 
     res.sendFile(filePath, function (err) {
         if (err) {

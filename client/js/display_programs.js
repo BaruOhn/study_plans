@@ -95,17 +95,36 @@ function filterPrograms(data, query) {
     programType,
     Object.fromEntries(Object.entries(programs).filter(([programName, programGroup]) => {
       const nameWords = programName.toLowerCase().split(' ');
-      const queryWords = query.toLowerCase().split(' ');
+      const queryLowerCase = query.toLowerCase();
+      
+      // Pro dotazy o délce 4 znaky a méně použijte jednoduchou přímou shodu
+      if (query.length <= 4) {
+        return nameWords.some(nameWord => nameWord.includes(queryLowerCase));
+      }
+      
+      // Pro dotazy o délce 5 znaků a více použijte sofistikovanější přístup
+      let isMatch = false;
 
-      const minDistance = nameWords.reduce((min, nameWord) => {
-        const distances = queryWords.map(queryWord =>
-          getLevenshteinDistance(queryWord, nameWord)
-        );
-        return Math.min(min, ...distances);
-      }, Infinity);
+      // Shoda založená na začátku slov
+      nameWords.forEach(nameWord => {
+        if (nameWord.startsWith(queryLowerCase)) {
+          isMatch = true;
+        }
+      });
 
-      const maxDistance = 3;
-      return minDistance <= maxDistance;
+      // Pokud nebyla nalezena přímá shoda, použijte průměrnou Levenshteinovu vzdálenost
+      if (!isMatch) {
+        let totalDistance = 0;
+        nameWords.forEach(nameWord => {
+          const distance = getLevenshteinDistance(queryLowerCase, nameWord);
+          totalDistance += distance;
+        });
+        const averageDistance = totalDistance / nameWords.length;
+        const maxDistance = query.length > 8 ? 2 : 3; // U delších dotazů buďte striktnější
+        isMatch = averageDistance <= maxDistance;
+      }
+
+      return isMatch;
     }))
   ]));
 }
@@ -205,7 +224,7 @@ function createCardForProgramType(container, programs, type, faculty) {
   body.className = 'p-4';
 
   const typeName = typeMapping[type] || type;
-  body.innerHTML = `<h3 class="text-xl font-semibold text-gray-800 px-2 py-4">${typeName} programy</h3>`;
+  body.innerHTML = `<h3 class="text-lg xs:text-xl font-semibold text-gray-800 px-2 py-4">${typeName} programy</h3>`;
 
   const table = createTableForPrograms(programs, faculty);
 
@@ -234,11 +253,11 @@ function createTableForPrograms(programs, faculty) {
   table.innerHTML = `
     <thead>
       <tr class="text-left">
-        <th class="text-gray-700 border-b font-bold p-3">Název</th>
-        <th class="text-gray-700 border-b font-bold p-3">Forma</th>
-        <th class="text-gray-700 border-b font-bold p-3 hidden md:table-cell">Garant</th>
-        <th class="text-gray-700 border-b font-bold p-3 hidden md:table-cell">Jazyk</th>
-        <th class="text-gray-700 border-b font-bold p-3 hidden md:table-cell">Platný od</th>
+        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3">Název</th>
+        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3">Forma</th>
+        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3 hidden md:table-cell">Garant</th>
+        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3 hidden md:table-cell">Jazyk</th>
+        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3">Platný od</th>
       </tr>
     </thead>`;
   const tbody = document.createElement('tbody');
@@ -246,11 +265,11 @@ function createTableForPrograms(programs, faculty) {
     Object.entries(programGroup).forEach(([id, program]) => {
       const row = tbody.insertRow();
       row.innerHTML = `
-        <td class="text-gray-700 border-b border-gray-200 p-3 max-w-40 font-bold">${program.nazevCz || program.nazev}</td>
-        <td class="text-gray-600 border-b border-gray-200 p-3 max-w-40">${program.forma}</td>
-        <td class="text-gray-600 border-b border-gray-200 p-3 hidden max-w-40 md:table-cell">${program.garant || '-'}</td>
-        <td class="text-gray-600 border-b border-gray-200 p-3 hidden max-w-40 md:table-cell">${program.jazyk}</td>
-        <td class="text-gray-600 border-b border-gray-200 p-3 hidden max-w-40 md:table-cell">${program.platnyOd}</td>`;
+        <td class="text-gray-700 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-40 font-bold">${program.nazevCz || program.nazev}</td>
+        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-40">${program.forma}</td>
+        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 hidden max-w-40 md:table-cell">${program.garant || '-'}</td>
+        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 hidden max-w-40 md:table-cell">${program.jazyk}</td>
+        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-40 text-center xs:text-left">${program.platnyOd}</td>`;
       row.classList.add('cursor-pointer', 'hover:bg-gray-100');
       row.addEventListener('click', () => {
         window.location.href = `/program_detail.html?stprIdno=${id}&faculty=${faculty}`;
