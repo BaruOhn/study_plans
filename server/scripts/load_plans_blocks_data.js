@@ -3,16 +3,19 @@ const path = require('path');
 const axios = require('axios');
 
 const programDetailsDirPath = path.join(__dirname, '..', 'data', 'PRF', 'obory');
-const studyPlansDirPath = path.join(__dirname, '..', 'data', 'PRF', 'studijni_plany');
+const plansBlocksDirPath = path.join(__dirname, '..', 'data', 'PRF', 'bloky_planu');
 
-// Načtení a uložení dat studijních plánů
-async function fetchStudyPlanData() {
+// Načtení a uložení dat bloků plánu
+async function fetchPlansBlocksData() {
   try {
     const files = await fs.readdir(programDetailsDirPath);
 
     for (const file of files) {
+      // Extrahování stprIdno z názvu souboru
+      const stprIdno = file.split('_')[0];
+
       const filePath = path.join(programDetailsDirPath, file);
-      const data = await fs.readFile(filePath);
+      const data = await fs.readFile(filePath, 'utf8');
       const obor = JSON.parse(data);
 
       if (!obor.oborInfo || obor.oborInfo.length === 0) {
@@ -20,27 +23,25 @@ async function fetchStudyPlanData() {
         continue;
       }
 
-      // Zpracování dat pro každý obor
       for (const oborItem of obor.oborInfo) {
         if (!oborItem.oborIdno) {
           console.error(`oborIdno nebylo nalezeno pro obor: ${file}`);
-          continue; 
+          continue;
         }
 
-        const oborIdno = oborItem.oborIdno;
-        const apiUrl = `https://stagservices.upol.cz/ws/services/rest2/predmety/getPredmetyByObor?oborIdno=${oborIdno}&outputFormat=JSON`;
+        // stplIdno je identické se stprIdno
+        const apiUrl = `https://stagservices.upol.cz/ws/services/rest2/programy/getBlokyPlanu?stplIdno=${stprIdno}&outputFormat=JSON`;
         const response = await axios.get(apiUrl);
-        const savePath = path.join(studyPlansDirPath, `${oborIdno}_studijni_plan.json`);
 
-        // Uložení dat studijního plánu
+        const savePath = path.join(plansBlocksDirPath, `${stprIdno}_bloky_planu.json`);
         await fs.writeFile(savePath, JSON.stringify(response.data, null, 2), 'utf8');
 
-        console.log(`Data byla uložena pro obor s ID: ${oborIdno}`);
+        console.log(`Data o blocích plánu byla uložena pro obor s ID: ${stprIdno}`);
       }
     }
   } catch (error) {
-    console.error(`Chyba při ukládání detailu programu pro program s ID: ${oborIdno}`, error);
+    console.error(`Chyba při načítání a ukládání dat bloků plánu`, error);
   }
 }
 
-module.exports = fetchStudyPlanData;
+module.exports = fetchPlansBlocksData;
