@@ -26,31 +26,40 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function generatePdf(oborIdno, faculty, stprIdno, programName) {
-    // Vytvoření požadavku na server pro generování PDF
+    const downloadIcon = document.getElementById('download-icon');
+    const loadingIcon = document.getElementById('loading-icon');
+
+    // Přidání třídy 'hidden' pro ikonu a odebrání u animace
+    downloadIcon.classList.add('invisible');
+    loadingIcon.classList.remove('hidden');
+
     const queryParams = new URLSearchParams({ oborIdno, faculty, stprIdno }).toString();
     const url = `/generate_pdf?${queryParams}`;
     fetch(url)
         .then(response => {
-            if (response.ok) return response.blob();
-            throw new Error('Něco se nepovedlo při generování PDF.');
+            if (!response.ok) throw new Error('Něco se nepovedlo při generování PDF.');
+            return response.blob();
         })
         .then(blob => {
-            const url = window.URL.createObjectURL(blob);
+            const blobUrl = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.style.display = 'none';
-            a.href = url;
+            a.href = blobUrl;
             a.download = `${programName}_studijni_plan.pdf`.replace(/ /g, "_");
-
             document.body.appendChild(a);
             a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+            window.URL.revokeObjectURL(blobUrl);
+            a.remove();
         })
         .catch(error => {
             console.error('Chyba:', error);
+        })
+        .finally(() => {
+            // Odebrání třídy 'hidden' u animace a přidání u ikony
+            loadingIcon.classList.add('hidden');
+            downloadIcon.classList.remove('invisible');
         });
 }
-
 
 async function fetchStudyPlanData(faculty, oborIdno, stprIdno) {
     // Sestavení cest a načtení dat
@@ -63,6 +72,7 @@ async function fetchStudyPlanData(faculty, oborIdno, stprIdno) {
     const selectedObor = oborData.oborInfo.find(obor => obor.oborIdno === oborIdnoNum);
 
     if (selectedObor) {
+        oborTyp = selectedObor.typ.toLowerCase();
         updatePageHeadings(selectedObor);
     } else {
         console.error('Obor s daným ID nebyl nalezen.');
@@ -72,10 +82,15 @@ async function fetchStudyPlanData(faculty, oborIdno, stprIdno) {
     displayData(data, faculty);
 
     if (data.predmetOboru && data.predmetOboru.length > 0) {
-        hasSubjects = true;
+        hasSubjects = true; // Nastavení hasSubjects na true, pokud jsou k dispozici předměty oboru
         const blockData = await fetchData(blocksPath);
         createHelpSection(blockData, oborTyp);
-    } 
+    }
+
+    // Přesunuto volání updatePageHeadings podle vaší specifikace
+    if (selectedObor) {
+        updatePageHeadings(selectedObor);
+    }
 }
 
 async function fetchData(path) {
@@ -85,6 +100,7 @@ async function fetchData(path) {
 }
 
 function updatePageHeadings(obor) {
+    console.log("Predmety: ", hasSubjects);
     const headerTitle = document.querySelector('section h2');
     const headerSubtitle = document.querySelector('section span');
     const headerTitle2 = document.querySelector('section h3');
@@ -95,7 +111,7 @@ function updatePageHeadings(obor) {
         headerTitle.textContent = `${obor.nazev} - studijní plán`;
         headerSubtitle.textContent = `${oborTyp} program`;
 
-        if(hasSubjects) {
+        if (hasSubjects) {
             headerTitle2.textContent = `${obor.forma} forma studia`
         }
         else {
@@ -107,8 +123,8 @@ function updatePageHeadings(obor) {
     } else {
         headerTitle.textContent = 'Studijní plán - Neznámý obor';
         headerSubtitle.textContent = 'Neznámý typ programu';
-        
-        if(hasSubjects) {
+
+        if (hasSubjects) {
             headerTitle2.textContent = 'Neznámá forma studia';
         }
         else {
@@ -204,7 +220,7 @@ function displayData(data, faculty) {
     if (data.predmetOboru.length === 0) {
         const noDataMessage = document.createElement('div');
         noDataMessage.textContent = 'Pro vybraný studijní plán nejsou ve STAGu k dispozici žádné předměty.';
-        noDataMessage.classList.add('text-gray-800', 'text-lg', 'font-semibold', 'mt-12', 'text-center', 'w-full', 'mx-auto');
+        noDataMessage.classList.add('text-gray-700', 'text-lg', 'font-semibold', 'mt-16', 'text-center', 'w-full', 'mx-auto');
         mainContent.appendChild(noDataMessage);
     } else {
         const uniquePredmety = Array.from(new Map(data.predmetOboru.filter(predmet => predmet.kreditu > 0).map(predmet => [predmet.nazev, predmet])).values());
