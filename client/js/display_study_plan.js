@@ -276,6 +276,8 @@ function generatePredmetHTML(predmet, faculty) {
             <div class="flex items-center h-12 w-[218px] print:w-[118px] print:h-8 justify-between font-sans px-4 py-6 print:px-2 print:py-4">
                 <div class="text-sm font-normal line-clamp-3 leading-tight w-44 print:text-[8px] print:w-24">${predmet.nazev}</div>
                 <div class="text-sm font-light italic text-gray-700 print:text-[8px]">${predmet.kreditu}</div>
+                <i class="fas fa-check text-gray-700"></i>
+                <i class="fas fa-times xmark text-gray-700"></i>
             </div>
         </a>
     `;

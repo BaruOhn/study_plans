@@ -2,6 +2,7 @@ let selectedTypeFilters = ["Bakalářský"];
 let selectedFormFilters = ["Prezenční"];
 let selectedLangFilters = ["Čeština"];
 let allPrograms = [];
+let programPreferences = {};
 
 document.addEventListener('DOMContentLoaded', () => {
   selectedTypeFilters = JSON.parse(sessionStorage.getItem('selectedTypeFilters')) || ["Bakalářský"];
@@ -14,10 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
   setupFilterButtons('.filter-btn-form', selectedFormFilters);
   setupFilterButtons('.filter-btn-lang', selectedLangFilters);
 
+  loadPreferences();
+
   const savedSearchQuery = sessionStorage.getItem('searchQuery') || '';
   document.querySelector('#search-input').value = savedSearchQuery;
-
-  fetchProgramData('PRF', savedSearchQuery);
 });
 
 // Nastavení vyhledávacího formuláře
@@ -237,7 +238,6 @@ function filterProgramsByCriteria(allPrograms, selectedFilters, criteriaKey) {
   return programsAfterFiltering;
 }
 
-
 // Uloží vybrané filtry do session storage
 function saveFiltersToSessionStorage() {
   sessionStorage.setItem('selectedTypeFilters', JSON.stringify(selectedTypeFilters));
@@ -317,6 +317,7 @@ function createTableForPrograms(programs, faculty) {
         <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3 hidden md:table-cell">Garant</th>
         <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3 hidden md:table-cell">Jazyk</th>
         <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3">Platný od</th>
+        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3"></th>
       </tr>
     </thead>`;
   const tbody = document.createElement('tbody');
@@ -328,13 +329,103 @@ function createTableForPrograms(programs, faculty) {
         <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-40">${program.forma}</td>
         <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 hidden max-w-40 md:table-cell">${program.garant || '-'}</td>
         <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 hidden max-w-40 md:table-cell">${program.jazyk}</td>
-        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-40 text-center xs:text-left">${program.platnyOd}</td>`;
-      row.classList.add('cursor-pointer', 'hover:bg-gray-100');
-      row.addEventListener('click', () => {
-        window.location.href = `/program_detail.html?stprIdno=${id}&faculty=${faculty}`;
+        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-40 text-center xs:text-left">${program.platnyOd}</td>
+
+        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-10 text-left whitespace-nowrap font-medium">
+          <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+            <input type="checkbox" name="toggle" id="toggle-${id}" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" checked />
+            <label for="toggle-${id}" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+          </div>
+        </td>`;
+      row.classList.add('hover:bg-gray-100', 'cursor-pointer');
+      // Přidání události kliknutí pouze na buňky mimo toggle, aby nebylo přesměrování způsobeno kliknutím na toggle
+      row.querySelectorAll('td:not(:last-child)').forEach(cell => {
+        cell.addEventListener('click', () => {
+          window.location.href = `/program_detail.html?stprIdno=${id}&faculty=${faculty}`;
+        });
+      });
+
+      // Nastavení stavu toggle tlačítka
+      const toggle = row.querySelector('.toggle-checkbox');
+      if (programPreferences && programPreferences[id] !== undefined) {
+        toggle.checked = programPreferences[id]; // Nastaví checked podle preferencí
+      }
+      updateToggleStyle(toggle);
+      updateRowStyle(toggle);
+
+      // Ošetření událostí pro změnu stavu tlačítka
+      toggle.addEventListener('change', () => {
+        updateToggleStyle(toggle); // Aktualizace vizuálního stavu tlačítka
+        updateRowStyle(toggle); // Nově přidaná funkce pro aktualizaci stylu řádku
+        savePreference(id, toggle.checked); // Odeslání změněné preference
       });
     });
   });
   table.appendChild(tbody);
   return table;
+}
+
+// Aktualizuje styl toggle tlačítka
+function updateToggleStyle(toggle) {
+  if (toggle.checked) {
+    // Změna vzhledu toggle tlačítka
+    toggle.classList.add('bg-amber-500', 'translate-x-4');
+    toggle.classList.remove('translate-x-0', 'bg-white');
+  } else {
+    toggle.classList.remove('bg-amber-500', 'translate-x-4');
+    toggle.classList.add('translate-x-0', 'bg-white');
+  }
+}
+
+// Funkce pro aktualizaci vizuálního stylu řádku tabulky
+function updateRowStyle(toggle) {
+  const row = toggle.closest('tr'); // Najde nejbližšího rodiče řádku tabulky
+  
+  if (toggle.checked) {
+    row.classList.remove('bg-gray-100', 'opacity-50');
+  } else {
+    row.classList.add('bg-gray-100', 'opacity-50');
+  }
+}
+
+// Funkce pro odeslání preference na server
+function savePreference(programId, preference) {
+  // Příprava dat k odeslání
+  const data = {
+    stprIdno: programId,
+    preference: preference
+  };
+
+  // Odeslání dat pomocí fetch API
+  fetch('/save-preferences', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Success:', data);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+}
+
+// Funkce pro načtení preferencí
+function loadPreferences() {
+  fetch('/get-preferences')
+    .then(response => response.json())
+    .then(data => {
+      console.log("Loaded preferences:", data);
+      programPreferences = data;
+
+      // Načtení dat programů po načtení preferencí
+      const savedSearchQuery = sessionStorage.getItem('searchQuery') || '';
+      fetchProgramData('PRF', savedSearchQuery); 
+    })
+    .catch((error) => {
+      console.error('Error loading preferences:', error);
+    });
 }

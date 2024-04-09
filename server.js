@@ -13,6 +13,8 @@ const fetchStudyPlanData = require('./server/scripts/load_study_plans_data');
 const fetchSubjectData = require('./server/scripts/load_subjects_data');
 const fetchPlansBlocksData = require('./server/scripts/load_plans_blocks_data');
 
+app.use(express.json());
+
 // Načtení dat studijních programů v 00:00 každý den
 cron.schedule('0 0 * * *', async () => {
     try {
@@ -194,6 +196,46 @@ app.get('/generate_pdf', async (req, res) => {
         await browser.close();
     }
 });
+
+// GET endpoint pro získání preferencí
+app.get('/get-preferences', async (req, res) => {
+    const faculty = 'PRF';
+    const filePath = path.join(__dirname, `server/data/${faculty}`, `program_preferences.json`);
+
+    try {
+        const data = await fs.readFile(filePath, 'utf8');
+        res.json(JSON.parse(data));
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Chyba při načítání preferencí.');
+    }
+});
+
+// POST endpoint pro uložení preferencí
+app.post('/save-preferences', async (req, res) => {
+    const faculty = 'PRF';
+    const filePath = path.join(__dirname, `server/data/${faculty}`, `program_preferences.json`);
+    const newData = req.body; 
+
+    try {
+        let existingData;
+        try {
+            const data = await fs.readFile(filePath, 'utf8');
+            existingData = JSON.parse(data);
+        } catch (readError) {
+            existingData = {};
+        }
+
+        existingData[newData.stprIdno] = newData.preference;
+        
+        await fs.writeFile(filePath, JSON.stringify(existingData, null, 2));
+        res.json({ message: 'Preference byly úspěšně uloženy.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Chyba při ukládání preferencí.');
+    }
+});
+
 
 
 // Spuštění serveru
