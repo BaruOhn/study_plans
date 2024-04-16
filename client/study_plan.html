@@ -12,7 +12,7 @@
 
 <body class="font-sans flex flex-col min-h-screen">
     <div class="flex-grow">
-        <header class="bg-sky-700 px-7 py-2 md:px-8">
+        <header class="bg-sky-700 px-7 py-2 md:px-8 print:hidden">
             <div class="flex justify-between items-center">
                 <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
                 <div class="flex items-center gap-4">
@@ -33,19 +33,22 @@
                 </div>
                 <button id="download-pdf" class="text-gray-700 print:hidden mt-7 flex justify-center items-center">
                     <i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-file text-gray-700 mr-2" id="download-icon"></i>
-                    <div class="hidden animate-spin rounded-full border-4 border-bg-gray-light border-t-gray-700 h-7 w-7 -ml-10 mr-2" id="loading-icon"></div>Stáhnout PDF
+                    <div class="hidden animate-spin rounded-full border-2 border-bg-gray-light border-t-gray-500 h-6 w-6 -ml-10 mr-2" id="loading-icon"></div>Stáhnout PDF
                 </button>
             </div>
             <h3 class="text-gray-700/95 font-bold text-xl mt-7 program-form print:text-base"></h3>
         </section>
 
-        <!-- Sekce s předměty -->
-        <main class="mx-4">
-            <div id="main-content" class="flex flex-wrap justify-center w-full"></div>
-        </main>
+        <!-- Sekce s předměty studijního plánu -->
+        <main class="mx-6 sm:mx-9 print:mx-6">
+            <div id="main-content" class="grid grid-cols-12 gap-4 print:gap-2"></div>
+        </main>        
 
-        <!-- Sekce s nápovědou -->
-        <div id="helper-container"></div>
+        <!-- Sekce s popisem programu -->
+        <div class="flex flex-col ml-6 sm:ml-9 mt-16 print:hidden">
+            <textarea id="description-text" class="w-72 xs:w-96 md:w-[600px] border border-gray-200 p-4 focus:outline-amber-500"></textarea>
+            <button id="description-button" onclick="saveDescription()" class="bg-amber-500/90 text-white font-bold h-12 w-40 p-3 mt-4 rounded-full transition-shadow hover:shadow-md hover:bg-amber-500">Save Description</button>
+        </div>
     </div>
 
     <footer class="text-center text-gray-400 px-7 pt-0 pb-8 print:hidden">
