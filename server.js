@@ -7,6 +7,8 @@ const app = express();
 const port = 3000;
 
 let lastUpdateDate = null;
+const faculty = 'PRF';
+
 const fetchProgramsData = require('./server/scripts/load_programs_data');
 const fetchProgramDetails = require('./server/scripts/load_program_detail_data');
 const fetchStudyPlanData = require('./server/scripts/load_study_plans_data');
@@ -198,8 +200,7 @@ app.get('/generate_pdf', async (req, res) => {
 });
 
 // GET endpoint pro získání preferencí
-app.get('/get-preferences', async (req, res) => {
-    const faculty = 'PRF';
+app.get('/get_program_preferences', async (req, res) => {
     const filePath = path.join(__dirname, `server/data/${faculty}`, `program_preferences.json`);
 
     try {
@@ -207,13 +208,12 @@ app.get('/get-preferences', async (req, res) => {
         res.json(JSON.parse(data));
     } catch (err) {
         console.error(err);
-        res.status(500).send('Chyba při načítání preferencí.');
+        res.status(500).send('Chyba při načítání preferencí programů.');
     }
 });
 
 // POST endpoint pro uložení preferencí
-app.post('/save-preferences', async (req, res) => {
-    const faculty = 'PRF';
+app.post('/save_program_preferences', async (req, res) => {
     const filePath = path.join(__dirname, `server/data/${faculty}`, `program_preferences.json`);
     const newData = req.body; 
 
@@ -229,13 +229,105 @@ app.post('/save-preferences', async (req, res) => {
         existingData[newData.stprIdno] = newData.preference;
         
         await fs.writeFile(filePath, JSON.stringify(existingData, null, 2));
-        res.json({ message: 'Preference byly úspěšně uloženy.' });
+        res.json({ message: 'Preference programů byly úspěšně uloženy.' });
     } catch (err) {
         console.error(err);
-        res.status(500).send('Chyba při ukládání preferencí.');
+        res.status(500).send('Chyba při ukládání preferencí programů.');
     }
 });
 
+app.get('/get_subject_preferences', async (req, res) => {
+    const { stprIdno, faculty } = req.query;
+    const filePath = path.join(__dirname, `server/data/${faculty}/subject_preferences`, `${stprIdno}_subject_preferences.json`);
+
+    try {
+        const data = await fs.readFile(filePath, 'utf8');
+        res.json(JSON.parse(data));
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            res.json({});
+        } else {
+            console.error(err);
+            res.status(500).send('Chyba při načítání preferencí předmětů pro program ${stprIdno}.');
+        }
+    }
+});
+
+app.post('/save_subject_preferences', async (req, res) => {
+    const { department, acronym, preference, stprIdno, faculty } = req.body;
+    const filePath = path.join(__dirname, `server/data/${faculty}/subject_preferences`, `${stprIdno}_subject_preferences.json`);
+    const subjectId = `${department}_${acronym}`; // Vytvoření jedinečného identifikátoru
+
+    try {
+        let existingData;
+        try {
+            const data = await fs.readFile(filePath, 'utf8');
+            existingData = JSON.parse(data);
+        } catch (readError) {
+            if (readError.code === 'ENOENT') {
+                existingData = {};
+            } else {
+                throw readError;
+            }
+        }
+        existingData[subjectId] = preference;
+        
+        await fs.writeFile(filePath, JSON.stringify(existingData, null, 2), 'utf8');
+        res.json({ message: 'Preference předmětů byly úspěšně uloženy pro program ${stprIdno}.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Chyba při ukládání preferencí předmětů pro program ${stprIdno}.');
+    }
+});
+
+// GET endpoint pro získání popisu studijního plánu
+app.get('/get_study_plan_description', async (req, res) => {
+    const { stprIdno, faculty } = req.query;
+    const filePath = path.join(__dirname, `server/data/${faculty}/study_plan_description`, `${stprIdno}_description.json`);
+
+    try {
+        let data = await fs.readFile(filePath, 'utf8');
+        res.json(JSON.parse(data));
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            // If the file does not exist, create it with a default empty description
+            const defaultDescription = {}; // You can set some default content here if needed
+            await fs.writeFile(filePath, JSON.stringify(defaultDescription), 'utf8');
+            res.json(defaultDescription);
+        } else {
+            console.error(err);
+            res.status(500).send('Error loading study plan description.');
+        }
+    }
+});
+
+
+// POST endpoint pro uložení popisu studijního plánu
+app.post('/save_study_plan_description', async (req, res) => {
+    const { stprIdno, faculty, description } = req.body;
+    const filePath = path.join(__dirname, `server/data/${faculty}/study_plan_description`, `${stprIdno}_description.json`);
+
+    try {
+        let existingDescription;
+        try {
+            const data = await fs.readFile(filePath, 'utf8');
+            existingDescription = JSON.parse(data);
+        } catch (readError) {
+            if (readError.code === 'ENOENT') {
+                existingDescription = {};
+            } else {
+                throw readError;
+            }
+        }
+        existingDescription.description = description;
+        
+        await fs.writeFile(filePath, JSON.stringify(existingDescription, null, 2), 'utf8');
+        res.json({ message: 'Popis studijního plánu byl úspěšně uložen.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Chyba při ukládání popisu studijního plánu.');
+    }
+});
 
 
 // Spuštění serveru

@@ -134,6 +134,13 @@ function displaySuggestions(inputText) {
         });
       });
     });
+    // Nastavuje vzhled vstupního pole na základě toho, zda jsou zobrazeny návrhy
+    toggleInputStyle(hasSuggestions);
+
+    // Pokud nebyly nalezeny žádné návrhy, zavřeme kontejner s návrhy
+    if (!hasSuggestions) {
+      suggestionsContainer.style.display = 'none';
+    }
   }
 }
 
@@ -141,15 +148,16 @@ function toggleInputStyle(showSuggestions) {
   const searchInput = document.querySelector('#search-input');
 
   if (showSuggestions) {
+    // Návrhy jsou zobrazeny, měníme rohy na ostře řezané (například odstraněním třídy pro kulaté rohy)
     searchInput.classList.remove('rounded-3xl');
-    searchInput.classList.add('rounded-t-3xl');
-    searchInput.classList.add('border-b-2', 'border-gray-200');
+    searchInput.classList.add('rounded-t-3xl', 'border-b-2', 'border-gray-200');
   } else {
-    searchInput.classList.remove('rounded-t-3xl');
+    // Návrhy nejsou zobrazeny, vracíme rohy na kulaté
+    searchInput.classList.remove('rounded-t-3xl', 'border-b-2', 'border-gray-200');
     searchInput.classList.add('rounded-3xl');
-    searchInput.classList.remove('border-b-2', 'border-gray-200');
   }
 }
+
 
 // Filtruje programy podle zadaného vyhledávacího dotazu
 function filterPrograms(data, query) {
@@ -301,7 +309,6 @@ function createCardForProgramType(container, programs, type, faculty) {
 
   card.appendChild(header);
   card.appendChild(body);
-
   container.appendChild(card);
 }
 
@@ -312,12 +319,12 @@ function createTableForPrograms(programs, faculty) {
   table.innerHTML = `
     <thead>
       <tr class="text-left">
-        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3">Název</th>
-        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3">Forma</th>
-        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3 hidden md:table-cell">Garant</th>
-        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3 hidden md:table-cell">Jazyk</th>
-        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3">Platný od</th>
-        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 xs:px-3"></th>
+        <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3">Název</th>
+        <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3">Forma</th>
+        <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3 hidden md:table-cell">Garant</th>
+        <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3 hidden md:table-cell">Jazyk</th>
+        <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3 max-w-20">Platný od</th>
+        <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3 max-w-20">Zobrazeno</th>
       </tr>
     </thead>`;
   const tbody = document.createElement('tbody');
@@ -325,13 +332,13 @@ function createTableForPrograms(programs, faculty) {
     Object.entries(programGroup).forEach(([id, program]) => {
       const row = tbody.insertRow();
       row.innerHTML = `
-        <td class="text-gray-700 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-40 font-bold">${program.nazevCz || program.nazev}</td>
-        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-40">${program.forma}</td>
-        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 hidden max-w-40 md:table-cell">${program.garant || '-'}</td>
-        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 hidden max-w-40 md:table-cell">${program.jazyk}</td>
-        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-40 text-center xs:text-left">${program.platnyOd}</td>
+        <td class="text-gray-700 text-xs sm:text-base border-b border-gray-200 px-2 py-3 sm:px-3 max-w-40 font-bold">${program.nazevCz || program.nazev}</td>
+        <td class="text-gray-600 text-xs sm:text-base border-b border-gray-200 px-2 py-3 sm:px-3 max-w-40">${program.forma}</td>
+        <td class="text-gray-600 text-xs sm:text-base border-b border-gray-200 px-2 py-3 sm:px-3 hidden max-w-40 md:table-cell">${program.garant || '-'}</td>
+        <td class="text-gray-600 text-xs sm:text-base border-b border-gray-200 px-2 py-3 sm:px-3 hidden max-w-40 md:table-cell">${program.jazyk}</td>
+        <td class="text-gray-600 text-xs sm:text-base border-b border-gray-200 px-2 py-3 sm:px-3 max-w-40 text-center xs:text-left">${program.platnyOd}</td>
 
-        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-10 text-left whitespace-nowrap font-medium">
+        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-20 text-center whitespace-nowrap font-medium">
           <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
             <input type="checkbox" name="toggle" id="toggle-${id}" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" checked />
             <label for="toggle-${id}" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
@@ -380,7 +387,7 @@ function updateToggleStyle(toggle) {
 // Funkce pro aktualizaci vizuálního stylu řádku tabulky
 function updateRowStyle(toggle) {
   const row = toggle.closest('tr'); // Najde nejbližšího rodiče řádku tabulky
-  
+
   if (toggle.checked) {
     row.classList.remove('bg-gray-100', 'opacity-50');
   } else {
@@ -397,33 +404,32 @@ function savePreference(programId, preference) {
   };
 
   // Odeslání dat pomocí fetch API
-  fetch('/save-preferences', {
+  fetch('/save_program_preferences', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
   })
-  .then(response => response.json())
-  .then(data => {
-    console.log('Success:', data);
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
 }
 
 // Funkce pro načtení preferencí
 function loadPreferences() {
-  fetch('/get-preferences')
+  fetch('/get_program_preferences')
     .then(response => response.json())
     .then(data => {
-      console.log("Loaded preferences:", data);
       programPreferences = data;
 
       // Načtení dat programů po načtení preferencí
       const savedSearchQuery = sessionStorage.getItem('searchQuery') || '';
-      fetchProgramData('PRF', savedSearchQuery); 
+      fetchProgramData('PRF', savedSearchQuery);
     })
     .catch((error) => {
       console.error('Error loading preferences:', error);

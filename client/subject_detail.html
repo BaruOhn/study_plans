@@ -30,29 +30,34 @@
                 <h2 class="text-sky-700 font-bold text-2xl">Detail předmětu</h2>
                 <button id="close-btn" class="text-gray-700"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-full fas fa-times text-gray-700 mr-2"></i></a></button>
             </div>
-            <div class="overflow-x-auto py-4 sm:w-auto">
-                <table class="w-full sm:w-auto min-w-[650px] table-auto text-gray-800/90">
-                    <thead>
-                        <tr class="p-4 border-t border-b">
-                            <th class="text-left w-2/12">Zkratka</th>
-                            <th class="text-left w-6/12">Název</th>
-                            <th class="text-center w-2/12">Kredity</th>
-                            <th class="text-center w-2/12 whitespace-nowrap">Rozsah výuky<br>Př+Cv+Sem</th>
-                            <th class="text-center w-2/12">Zakončení</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="border-b">
-                            <td class="text-left py-3" id="zkratka"></td>
-                            <td class="text-left py-3" id="nazev"></td>
-                            <td class="text-center py-3" id="kredity"></td>
-                            <td class="text-center py-3" id="rozsah"></td>
-                            <td class="text-center py-3" id="zakonceni"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                             
+            <div class="flex flex-col sm:w-auto md:mb-4">
+                <div class="flex-grow overflow-x-auto">
+                    <table class="min-w-[704px] w-full table-auto text-gray-800/90">
+                        <thead>
+                            <tr class="p-4 border-t border-b">
+                                <th class="text-left w-2/12">Zkratka</th>
+                                <th class="text-left w-6/12">Název</th>
+                                <th class="text-center w-2/12">Kredity</th>
+                                <th class="text-center w-2/12 whitespace-nowrap">Rozsah výuky<br>Př+Cv+Sem</th>
+                                <th class="text-center w-2/12">Zakončení</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="text-left py-3" id="zkratka"></td>
+                                <td class="text-left py-3" id="nazev"></td>
+                                <td class="text-center py-3" id="kredity"></td>
+                                <td class="text-center py-3" id="rozsah"></td>
+                                <td class="text-center py-3" id="zakonceni"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+            <div class="flex justify-end md:hidden animate-bounce mt-4">
+                <i class="fas fa-chevron-right text-gray-600 my-2"></i>
+            </div>
+
             <section>
                 <article class="pt-2 pb-6">
                     <h3 class="text-gray-800/90 font-bold">Anotace kurzu: </h3>
