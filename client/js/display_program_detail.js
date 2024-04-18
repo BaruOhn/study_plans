@@ -14,6 +14,21 @@ document.addEventListener('DOMContentLoaded', () => {
   backBtn.addEventListener('click', () => {
     window.history.back();
   });
+
+  const userData = JSON.parse(sessionStorage.getItem('userData'));
+  const authButton = document.getElementById('auth-button');
+  const authButtonMobile = document.getElementById('auth-button-mobile');
+  if (userData) {
+    // Nastavení pro odhlášení
+    authButton.innerHTML = '<a class="flex items-center"><i class="fas fa-sign-out-alt text-white mr-2"></i>Odhlásit se</a>';
+    authButtonMobile.innerHTML = '<a><i class="fas fa-sign-out-alt text-white text-xl"></i></a>';
+    authButton.onclick = logout;
+    authButtonMobile.onclick = logout;
+  } else {
+    // Nastavení pro přihlášení
+    authButton.innerHTML = '<a href="login.html" class="flex items-center"><i class="fas fa-user text-white mr-2"></i>Přihlásit se</a>';
+    authButtonMobile.innerHTML = '<a href="login.html"><i class="fas fa-user text-white text-xl"></i></a>';
+  }
 });
 
 function fetchProgramDetail(faculty, stprIdno) {
@@ -38,7 +53,7 @@ function displayData(data, faculty, stprIdno) {
   const oborListUl = document.getElementById('obor-seznam');
 
   data.oborInfo.forEach(obor => {
-    const card = document.createElement('a'); 
+    const card = document.createElement('a');
     card.href = `study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}`; // Přidání odkazu na celou kartu
     card.className = 'border border-t-0 border-solid border-gray-300 rounded-t-none rounded-b mx-4 mb-8 p-4 sm:p-6 w-full max-w-xs xs:max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-6xl 2xl:max-w-7xl shadow-md hover:shadow-lg transition-shadow';
     card.addEventListener('mouseenter', () => { card.classList.add('shadow-lg') });
@@ -73,3 +88,7 @@ function displayData(data, faculty, stprIdno) {
   });
 }
 
+function logout() {
+  sessionStorage.removeItem('userData'); // Smazání dat uživatele
+  window.location.href = 'index.html'; // Přesměrování na domovskou stránku
+}

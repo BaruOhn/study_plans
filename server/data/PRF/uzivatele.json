@@ -1,0 +1,26 @@
+[
+    {
+        "jmeno": "Ohnoutková Barbora",
+        "email": "ohnoba00@upol.cz",
+        "role": "garant",
+        "password": "$2a$10$3TEu06yVz/OmOfMqpsLEduyn.VWIBdBhdqVK/8M99JISDcfDYZo4G"
+    },
+    {
+        "jmeno": "Trnečka Martin, RNDr. Ph.D.",
+        "email": "martin.trnecka@upol.cz",
+        "role": "garant",
+        "password": "$2a$10$3TEu06yVz/OmOfMqpsLEduyn.VWIBdBhdqVK/8M99JISDcfDYZo4G"
+    },
+    {
+        "jmeno": "Krupka Michal, doc. RNDr. Ph.D.",
+        "email": "michal.krupka@upol.cz",
+        "role": "garant",
+        "password": "$2a$10$3TEu06yVz/OmOfMqpsLEduyn.VWIBdBhdqVK/8M99JISDcfDYZo4G"
+    },
+    {
+        "jmeno": "Bělohlávek Radim, prof. RNDr. Ph.D., DSc.",
+        "email": "radim.belohlavek@upol.cz",
+        "role": "garant",
+        "password": "$2a$10$3TEu06yVz/OmOfMqpsLEduyn.VWIBdBhdqVK/8M99JISDcfDYZo4G"
+    }
+]

@@ -54,6 +54,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
+    const userData = JSON.parse(sessionStorage.getItem('userData'));
+    const authButton = document.getElementById('auth-button');
+    const authButtonMobile = document.getElementById('auth-button-mobile');
+    if (userData) {
+        // Nastavení pro odhlášení
+        authButton.innerHTML = '<a class="flex items-center"><i class="fas fa-sign-out-alt text-white mr-2"></i>Odhlásit se</a>';
+        authButtonMobile.innerHTML = '<a><i class="fas fa-sign-out-alt text-white text-xl"></i></a>';
+        authButton.onclick = logout;
+        authButtonMobile.onclick = logout;
+    } else {
+        // Nastavení pro přihlášení
+        authButton.innerHTML = '<a href="login.html" class="flex items-center"><i class="fas fa-user text-white mr-2"></i>Přihlásit se</a>';
+        authButtonMobile.innerHTML = '<a href="login.html"><i class="fas fa-user text-white text-xl"></i></a>';
+    }
+
     fetchPreferences();
     fetchDescription();
 });
@@ -185,7 +200,7 @@ function updatePageHeadings(obor) {
 function createSectionForYear(rocnik) {
     const section = document.createElement('section');
     if (oborTyp === 'navazující') {
-        section.classList.add('col-span-12', 'lg:col-span-6', 'print:col-span-3');
+        section.classList.add('col-span-12', 'lg:col-span-6', 'print:col-span-6');
     }
     else {
         section.classList.add('col-span-12', 'lg:col-span-6', 'xl:col-span-4', 'print:col-span-4');
@@ -207,22 +222,21 @@ function createSectionForYear(rocnik) {
 function createSectionForUnassignedSubjects() {
     const section = document.createElement('section');
     section.classList.add('col-span-12');
+    section.style.pageBreakBefore = 'always';
 
-    let gridClass = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6';
+    let gridClass = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 print:grid-cols-6';
     if (oborTyp === 'navazující') {
-        gridClass = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4';
+        gridClass = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 print:grid-cols-4';
     }
 
     section.innerHTML = `
         <h4 class="text-lg font-extrabold text-gray-800/80 mt-4 mb-6 text-center print:text-sm">Předměty bez určeného ročníku nebo semestru</h4>
-        <div class="unassigned-subjects-container ${gridClass} gap-x-0.5 mb-0.5 print:grid-cols-6">
+        <div class="unassigned-subjects-container ${gridClass} gap-x-0.5 mb-0.5">
             <!-- Zde budou přidány předměty -->
         </div>
     `;
     return section;
 }
-
-
 
 function displayData(data, faculty) {
     const mainContent = document.getElementById('main-content');
@@ -285,11 +299,18 @@ function generatePredmetHTML(predmet, faculty) {
     const colorClasses = ['bg-sky-500/50', 'bg-amber-400/50', 'bg-red-400/50', 'bg-green-500/50'];
     const colorClass = colorClasses[statutToColorIndex];
 
+    if(oborTyp === 'navazující') {
+        subjectWidth = 'w-full';
+    }
+    else {
+        subjectWidth = 'w-[121px]';
+    }
+
     return `
-        <a href="subject_detail.html?faculty=${faculty}&department=${predmet.katedra}&acronym=${predmet.zkratka}" class="block ${colorClass} mb-0.5 ml-0.5 w-full print:w-[121px] subject-container">
-            <div class="flex items-center h-14 justify-between font-sans px-4 py-6 print:px-2 print:py-4 print:h-8">
+        <a href="subject_detail.html?faculty=${faculty}&department=${predmet.katedra}&acronym=${predmet.zkratka}" class="block ${colorClass} mb-0.5 ml-0.5 w-full print:w-[${subjectWidth}] subject-container">
+            <div class="flex items-center h-[52px] justify-between font-sans px-4 py-6 print:px-2 print:py-4 print:h-8">
                 <div class="text-sm font-normal line-clamp-3 leading-tight flex-grow print:text-[8px]">${predmet.nazev}</div>
-                <i class="icon-toggle fas fa-times xmark text-gray-700/90 text-xl p-2" data-department="${predmet.katedra}" data-acronym="${predmet.zkratka}"></i>
+                <i class="icon-toggle fas fa-times xmark text-gray-700/90 text-base p-2" data-department="${predmet.katedra}" data-acronym="${predmet.zkratka}"></i>
             </div>
         </a>
     `;
@@ -368,25 +389,47 @@ function getDefaultDescription(oborTyp) {
 }
 
 // Funkce pro načtení popisu studijního plánu
+// Funkce pro načtení popisu studijního plánu
 async function fetchDescription() {
     const urlParams = new URLSearchParams(window.location.search);
     const stprIdno = urlParams.get('stprIdno');
     const faculty = urlParams.get('faculty');
+    
+    // Místo tvrdého zakódování oborTypu získáme oborTyp z funkce fetchStudyPlanData, která by měla být volána před fetchDescription
     const response = await fetch(`/get_study_plan_description?faculty=${faculty}&stprIdno=${stprIdno}`);
     const descriptionText = document.getElementById('description-text');
+    const descriptionView = document.getElementById('description-view');
+    const editButton = document.getElementById('description-button');
+
+    // Získání výchozího popisu na základě oboru, oborTyp by měl být správně nastaven v fetchStudyPlanData
+    const defaultDescription = getDefaultDescription(oborTyp);
 
     if (response.ok) {
         const data = await response.json();
-        descriptionText.value = data.description || defaultDescription;
+        const description = data.description || defaultDescription;
+        
+        if (sessionStorage.userData && JSON.parse(sessionStorage.userData).role === "garant") {
+            descriptionText.value = description;
+            descriptionText.style.display = 'block'; // Zobrazení textarea a tlačítka pro garanta
+            editButton.style.display = 'block';
+            descriptionView.style.display = 'none'; // Skrytí paragrafu pro nepřihlášené uživatele
+        } else {
+            descriptionView.textContent = description;
+            descriptionView.style.display = 'block'; // Zobrazení paragrafu pro nepřihlášené uživatele
+            descriptionText.style.display = 'none'; // Skrytí textarea a tlačítka
+            editButton.style.display = 'none';
+        }
     } else if (response.status === 404) {
         console.log('No existing description. Using default.');
         descriptionText.value = defaultDescription;
+        descriptionText.style.display = 'block'; // Zobrazení textarea a tlačítka pro garanta
+        editButton.style.display = 'block';
+        descriptionView.style.display = 'none'; // Skrytí paragrafu pro nepřihlášené uživatele
     } else {
         console.error('Failed to fetch description due to server error');
         descriptionText.value = defaultDescription;
     }
 }
-
 
 async function saveDescription() {
     const descriptionText = document.getElementById('description-text').value;
@@ -406,12 +449,27 @@ async function saveDescription() {
         })
     });
 
+    const messageElement = document.getElementById('saveMessage');
     if (response.ok) {
-        console.log('Description saved successfully');
+        messageElement.textContent = 'Popis programu byl úspěšně uložen';
+        messageElement.classList.remove('opacity-0');
+        setTimeout(() => {
+            messageElement.style.transition = 'opacity 1s ease-out';
+            messageElement.classList.add('opacity-0'); 
+        }, 3000); 
     } else {
-        console.error('Failed to save description');
+        messageElement.textContent = 'Nepodařilo se uložit popis programu.';
+        messageElement.classList.remove('opacity-0');
+        setTimeout(() => {
+            messageElement.style.transition = 'opacity 1s ease-out';
+            messageElement.classList.add('opacity-0');
+        }, 3000);
     }
 }
 
+function logout() {
+    sessionStorage.removeItem('userData'); // Smazání dat uživatele
+    window.location.href = 'index.html'; // Přesměrování na domovskou stránku
+}
 
 {/* <div class="text-sm font-light italic text-gray-700 print:text-[8px]">${predmet.kreditu}</div> */ }

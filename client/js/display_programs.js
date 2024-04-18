@@ -9,6 +9,21 @@ document.addEventListener('DOMContentLoaded', () => {
   selectedFormFilters = JSON.parse(sessionStorage.getItem('selectedFormFilters')) || ["Prezenční"];
   selectedLangFilters = JSON.parse(sessionStorage.getItem('selectedLangFilters')) || ["Čeština"];
 
+  const userData = JSON.parse(sessionStorage.getItem('userData'));
+  const authButton = document.getElementById('auth-button');
+  const authButtonMobile = document.getElementById('auth-button-mobile');
+  if (userData) {
+    // Nastavení pro odhlášení
+    authButton.innerHTML = '<a class="flex items-center"><i class="fas fa-sign-out-alt text-white mr-2"></i>Odhlásit se</a>';
+    authButtonMobile.innerHTML = '<a><i class="fas fa-sign-out-alt text-white text-xl"></i></a>';
+    authButton.onclick = logout;
+    authButtonMobile.onclick = logout;
+  } else {
+    // Nastavení pro přihlášení
+    authButton.innerHTML = '<a href="login.html" class="flex items-center"><i class="fas fa-user text-white mr-2"></i>Přihlásit se</a>';
+    authButtonMobile.innerHTML = '<a href="login.html"><i class="fas fa-user text-white text-xl"></i></a>';
+  }
+
   setupSearchForm();
   setupSearchIconClick();
   setupFilterButtons('.filter-btn-type', selectedTypeFilters);
@@ -148,16 +163,13 @@ function toggleInputStyle(showSuggestions) {
   const searchInput = document.querySelector('#search-input');
 
   if (showSuggestions) {
-    // Návrhy jsou zobrazeny, měníme rohy na ostře řezané (například odstraněním třídy pro kulaté rohy)
     searchInput.classList.remove('rounded-3xl');
     searchInput.classList.add('rounded-t-3xl', 'border-b-2', 'border-gray-200');
   } else {
-    // Návrhy nejsou zobrazeny, vracíme rohy na kulaté
     searchInput.classList.remove('rounded-t-3xl', 'border-b-2', 'border-gray-200');
     searchInput.classList.add('rounded-3xl');
   }
 }
-
 
 // Filtruje programy podle zadaného vyhledávacího dotazu
 function filterPrograms(data, query) {
@@ -246,25 +258,78 @@ function filterProgramsByCriteria(allPrograms, selectedFilters, criteriaKey) {
   return programsAfterFiltering;
 }
 
-// Uloží vybrané filtry do session storage
-function saveFiltersToSessionStorage() {
-  sessionStorage.setItem('selectedTypeFilters', JSON.stringify(selectedTypeFilters));
-  sessionStorage.setItem('selectedFormFilters', JSON.stringify(selectedFormFilters));
-  sessionStorage.setItem('selectedLangFilters', JSON.stringify(selectedLangFilters));
-  sessionStorage.setItem('searchQuery', document.querySelector('#search-input').value);
+function filterProgramsByGuarantor(allPrograms, guarantorFullName) {
+  let filteredPrograms = {};
+  const guarantorName = guarantorFullName.trim();
+  Object.keys(allPrograms).forEach(programType => {
+    filteredPrograms[programType] = {};
+
+    Object.keys(allPrograms[programType]).forEach(programName => {
+      Object.keys(allPrograms[programType][programName]).forEach(programId => {
+        let programDetails = allPrograms[programType][programName][programId];
+        if (programDetails.garant && programDetails.garant.trim() === guarantorName) {
+          if (!filteredPrograms[programType][programName]) {
+            filteredPrograms[programType][programName] = {};
+          }
+
+          filteredPrograms[programType][programName][programId] = programDetails;
+        }
+      });
+    });
+  });
+  return filteredPrograms;
+}
+
+function filterProgramsForPublic(allPrograms) {
+  let publicPrograms = {};
+
+  Object.keys(allPrograms).forEach(programType => {
+    publicPrograms[programType] = {};
+
+    Object.keys(allPrograms[programType]).forEach(programName => {
+      Object.keys(allPrograms[programType][programName]).forEach(programId => {
+        let programDetails = allPrograms[programType][programName][programId];
+
+        // Kontrola, jestli je program povolen v preferences, nebo jestli preference pro program nejsou definovány
+        if (programPreferences[programId] || programPreferences[programId] === undefined) {
+          // Pokud neexistuje objekt pro tento název programu, inicializujeme ho
+          if (!publicPrograms[programType][programName]) {
+            publicPrograms[programType][programName] = {};
+          }
+
+          // Přidání programu do veřejně zobrazených programů
+          publicPrograms[programType][programName][programId] = programDetails;
+        }
+      });
+    });
+  });
+
+  return publicPrograms;
 }
 
 // Vyfiltruje a zobrazí programy podle zadaných filtrů a zavolá funkci pro vytvoření karet
 function displayProgramData(data, faculty) {
+  const userData = JSON.parse(sessionStorage.getItem('userData'));
+  let filteredData;
+
   const programsContainer = document.getElementById('study-programs');
   programsContainer.innerHTML = '';
 
+  if (userData && userData.role === 'garant') {
+    filteredData = filterProgramsByGuarantor(data, userData.jmeno);
+  } else {
+    filteredData = filterProgramsForPublic(data);
+  }
+
+
+  // Tady byla chyba, místo 'data' by mělo být 'filteredData' pro další zpracování
   ['Bakalářský', 'Navazující', 'Doktorský'].forEach(programType => {
     if (selectedTypeFilters.includes(programType)) {
-      let programData = data[programType] || {};
+      let programData = filteredData[programType] || {}; // Zde by mělo být 'filteredData'
       let filteredByForm = filterProgramsByCriteria(programData, selectedFormFilters, 'forma');
       let filteredByLanguage = filterProgramsByCriteria(filteredByForm, selectedLangFilters, 'jazyk');
 
+      // Toto zůstává beze změn, protože filtruje už 'filteredData'
       if (Object.keys(filteredByLanguage).length > 0) {
         createCardForProgramType(programsContainer, filteredByLanguage, programType, faculty);
       } else {
@@ -303,7 +368,7 @@ function createCardForProgramType(container, programs, type, faculty) {
     header.className += ' bg-gray-400';
     const noProgramsMessage = document.createElement('p');
     noProgramsMessage.className = 'text-gray-700 text-lg font-normal text-center mt-4 pb-2';
-    noProgramsMessage.textContent = 'Nebyly nalezeny žádné programy odpovídající zadanému výrazu.';
+    noProgramsMessage.textContent = 'Nebyly nalezeny žádné programy odpovídající zvoleným filtrům.';
     body.appendChild(noProgramsMessage);
   }
 
@@ -314,6 +379,7 @@ function createCardForProgramType(container, programs, type, faculty) {
 
 // Vytvoří tabulku programů pro daný typ programu
 function createTableForPrograms(programs, faculty) {
+  const userData = JSON.parse(sessionStorage.getItem('userData'));
   let table = document.createElement('table');
   table.classList.add('min-w-full', 'leading-normal');
   table.innerHTML = `
@@ -324,7 +390,7 @@ function createTableForPrograms(programs, faculty) {
         <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3 hidden md:table-cell">Garant</th>
         <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3 hidden md:table-cell">Jazyk</th>
         <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3 max-w-20">Platný od</th>
-        <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3 max-w-20">Zobrazeno</th>
+        ${userData ? '<th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3 max-w-20">Zobrazeno</th>' : ''}
       </tr>
     </thead>`;
   const tbody = document.createElement('tbody');
@@ -338,12 +404,14 @@ function createTableForPrograms(programs, faculty) {
         <td class="text-gray-600 text-xs sm:text-base border-b border-gray-200 px-2 py-3 sm:px-3 hidden max-w-40 md:table-cell">${program.jazyk}</td>
         <td class="text-gray-600 text-xs sm:text-base border-b border-gray-200 px-2 py-3 sm:px-3 max-w-40 text-center xs:text-left">${program.platnyOd}</td>
 
+        ${userData ? `
         <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-20 text-center whitespace-nowrap font-medium">
           <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
             <input type="checkbox" name="toggle" id="toggle-${id}" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" checked />
             <label for="toggle-${id}" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
           </div>
-        </td>`;
+        </td>` : ''}
+        `;
       row.classList.add('hover:bg-gray-100', 'cursor-pointer');
       // Přidání události kliknutí pouze na buňky mimo toggle, aby nebylo přesměrování způsobeno kliknutím na toggle
       row.querySelectorAll('td:not(:last-child)').forEach(cell => {
@@ -352,20 +420,21 @@ function createTableForPrograms(programs, faculty) {
         });
       });
 
-      // Nastavení stavu toggle tlačítka
-      const toggle = row.querySelector('.toggle-checkbox');
-      if (programPreferences && programPreferences[id] !== undefined) {
-        toggle.checked = programPreferences[id]; // Nastaví checked podle preferencí
-      }
-      updateToggleStyle(toggle);
-      updateRowStyle(toggle);
+      if (userData) {
+        // Ošetření událostí pro změnu stavu tlačítka, pokud je uživatel přihlášen
+        const toggle = row.querySelector('.toggle-checkbox');
+        if (programPreferences && programPreferences[id] !== undefined) {
+          toggle.checked = programPreferences[id]; // Nastaví checked podle preferencí
+        }
+        updateToggleStyle(toggle);
+        updateRowStyle(toggle);
 
-      // Ošetření událostí pro změnu stavu tlačítka
-      toggle.addEventListener('change', () => {
-        updateToggleStyle(toggle); // Aktualizace vizuálního stavu tlačítka
-        updateRowStyle(toggle); // Nově přidaná funkce pro aktualizaci stylu řádku
-        savePreference(id, toggle.checked); // Odeslání změněné preference
-      });
+        toggle.addEventListener('change', () => {
+          updateToggleStyle(toggle); // Aktualizace vizuálního stavu tlačítka
+          updateRowStyle(toggle); // Nově přidaná funkce pro aktualizaci stylu řádku
+          savePreference(id, toggle.checked); // Odeslání změněné preference
+        });
+      }
     });
   });
   table.appendChild(tbody);
@@ -393,6 +462,14 @@ function updateRowStyle(toggle) {
   } else {
     row.classList.add('bg-gray-100', 'opacity-50');
   }
+}
+
+// Uloží vybrané filtry do session storage
+function saveFiltersToSessionStorage() {
+  sessionStorage.setItem('selectedTypeFilters', JSON.stringify(selectedTypeFilters));
+  sessionStorage.setItem('selectedFormFilters', JSON.stringify(selectedFormFilters));
+  sessionStorage.setItem('selectedLangFilters', JSON.stringify(selectedLangFilters));
+  sessionStorage.setItem('searchQuery', document.querySelector('#search-input').value);
 }
 
 // Funkce pro odeslání preference na server
@@ -434,4 +511,9 @@ function loadPreferences() {
     .catch((error) => {
       console.error('Error loading preferences:', error);
     });
+}
+
+function logout() {
+  sessionStorage.removeItem('userData'); // Smazání dat uživatele
+  window.location.href = 'index.html'; // Přesměrování na domovskou stránku
 }
