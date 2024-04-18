@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const express = require('express');
 const fs = require('fs').promises;
 const cron = require('node-cron');
+const bcrypt = require('bcrypt');
 const path = require('path');
 const app = express();
 const port = 3000;
@@ -13,9 +14,19 @@ const fetchProgramsData = require('./server/scripts/load_programs_data');
 const fetchProgramDetails = require('./server/scripts/load_program_detail_data');
 const fetchStudyPlanData = require('./server/scripts/load_study_plans_data');
 const fetchSubjectData = require('./server/scripts/load_subjects_data');
-const fetchPlansBlocksData = require('./server/scripts/load_plans_blocks_data');
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Asynchronní načtení uživatelů při spuštění serveru
+let users = [];
+fs.readFile('server/data/PRF/uzivatele.json', 'utf8')
+  .then(data => {
+    users = JSON.parse(data);
+  })
+  .catch(err => {
+    console.error('Chyba při načítání souboru uzivatele.json:', err);
+  });
 
 // Načtení dat studijních programů v 00:00 každý den
 cron.schedule('0 0 * * *', async () => {
@@ -73,18 +84,6 @@ cron.schedule('0 3 * * *', async () => {
     timezone: 'Europe/Prague'
 });
 
-cron.schedule('0 4 * * *', async () => {
-    try {
-        console.log('Stahuji data bloků plánu...');
-        await fetchPlansBlocksData();
-        console.log('Data bloků plánu byla úspěšně stažena.');
-    } catch (error) {
-        console.error('Došlo k chybě při stahování dat bloků plánu:', error);
-    }
-}, {
-    scheduled: true,
-    timezone: 'Europe/Prague'
-});
 
 // Nastavení cesty pro statické soubory
 app.use(express.static(path.join(__dirname, 'client')));
@@ -97,6 +96,32 @@ app.get('/', (req, res) => {
 // Endpoint pro získání data poslední aktualizace
 app.get('/last-update', (req, res) => {
     res.json({ lastUpdate: lastUpdateDate });
+});
+
+// Endpoint pro přihlášení
+app.post('/login', (req, res) => {
+    const { email, password } = req.body;
+    console.log("Přijatý email a heslo:", email, password);
+
+    // Hledání uživatele
+    const user = users.find(u => u.email === email);
+    if (!user) {
+        return res.status(401).json({ message: "Neplatné přihlašovací údaje" });
+    }
+
+    // Porovnání hesel
+    bcrypt.compare(password, user.password, function(err, isMatch) {
+        if (err) {
+            console.error("Chyba při ověřování hesla:", err);
+            return res.status(500).json({ message: "Interní chyba serveru" });
+        }
+        if (isMatch) {
+            const { password, ...userWithoutPassword } = user;
+            res.json({ user: userWithoutPassword });
+        } else {
+            res.status(401).json({ message: "Neplatné přihlašovací údaje" });
+        }
+    });
 });
 
 // Endpoint pro získání dat studijních programů
@@ -149,19 +174,6 @@ app.get('/data/:faculty/predmety/:department/:acronym', (req, res) => {
     const acronym = req.params.acronym;
     const faculty = req.params.faculty;
     const filePath = path.join(__dirname, `server/data/${faculty}/predmety`, `${department}_${acronym}.json`);
-
-    res.sendFile(filePath, function (err) {
-        if (err) {
-            return res.status(404).send('Nelze najít soubor: ' + filePath);
-        }
-    });
-});
-
-// Endpoint pro získání bloků plánu
-app.get('/data/:faculty/bloky_planu/:stprIdno', (req, res) => {
-    const faculty = req.params.faculty;
-    const stprIdno = req.params.stprIdno;
-    const filePath = path.join(__dirname, `server/data/${faculty}/bloky_planu`, `${stprIdno}_bloky_planu.json`);
 
     res.sendFile(filePath, function (err) {
         if (err) {
@@ -290,8 +302,7 @@ app.get('/get_study_plan_description', async (req, res) => {
         res.json(JSON.parse(data));
     } catch (err) {
         if (err.code === 'ENOENT') {
-            // If the file does not exist, create it with a default empty description
-            const defaultDescription = {}; // You can set some default content here if needed
+            const defaultDescription = {}; 
             await fs.writeFile(filePath, JSON.stringify(defaultDescription), 'utf8');
             res.json(defaultDescription);
         } else {
@@ -328,7 +339,6 @@ app.post('/save_study_plan_description', async (req, res) => {
         res.status(500).send('Chyba při ukládání popisu studijního plánu.');
     }
 });
-
 
 // Spuštění serveru
 app.listen(port, () => {

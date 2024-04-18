@@ -8,8 +8,8 @@ client/assets/.DS_Store
 server/data/PRF/obory
 server/data/PRF/studijni_plany
 server/data/PRF/predmety
-server/data/PRF/bloky_planu
 server/data/PRF/subject_preferences
 server/data/PRF/study_plan_description
 server/data/PRF/program_preferences.json
+server/data/PRF/uzivatele.json
 server.js
