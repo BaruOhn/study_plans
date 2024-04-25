@@ -17,20 +17,21 @@
             <div class="flex justify-between items-center">
                 <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
                 <div class="flex items-center gap-4">
-                    <!-- Tlačítka pro přihlášení/odhlášení -->
-                    <button id="auth-button" class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center"><a class="flex items-center"><i id="authIcon" class="fas fa-user text-white mr-2"></i><span id="authText">Přihlásit se</span></a></button>
-                    <button id="auth-button-mobile" class="pl-6 xs:px-4 sm:px-6 md:hidden"><a><i class="fas fa-user text-white text-xl"></i></a></button>
+                    <!-- Tlačítko pro přihlášení/odhlášení -->
+                    <button id="auth-button" class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center" aria-label="Přihlásit se"><i class="fas fa-user text-white mr-2"></i><span id="authText">Přihlásit se</span></button>
+                    <button id="auth-button-mobile" class="pl-6 xs:px-4 sm:px-6 md:hidden" aria-label="Přihlásit se"><i class="fas fa-user text-white text-xl" aria-hidden="true"></i></button>
+
                     <!-- O aplikaci -->
-                    <button class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center"><a href="about_app.html" class="flex items-center"><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</a></button>
-                    <button class="px-2 xs:px-4 sm:px-6 md:hidden"><a href="about_app.html"><i class="fas fa-info-circle text-white text-xl"></i></a></button>
+                    <button class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center" aria-label="O aplikaci" onclick="location.href='about_app.html';"><span><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</span></button>
+                    <button class="px-2 xs:px-4 sm:px-6 md:hidden" aria-label="O aplikaci" onclick="location.href='about_app.html';"><i class="fas fa-info-circle text-white text-xl"></i></button>   
                 </div>
             </div>
         </header>
         
-        <main class="m-8">
+        <main class="mx-4 my-8 sm:mx-8">
             <div class="flex justify-between mb-4">
                 <h2 class="text-sky-700 font-bold text-2xl">Detail předmětu</h2>
-                <button id="close-btn" class="text-gray-700"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-full fas fa-times text-gray-700 mr-2"></i></a></button>
+                <button class="text-gray-700" onclick="window.history.back()"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-times text-gray-700"></i></button>
             </div>
             <div class="flex flex-col sm:w-auto md:mb-4">
                 <div class="flex-grow overflow-x-auto">
@@ -56,11 +57,11 @@
                     </table>
                 </div>
             </div>
-            <div class="flex justify-end md:hidden animate-bounce mt-4">
-                <i class="fas fa-chevron-right text-gray-600 my-2"></i>
+            <div class="flex justify-end md:hidden mt-4">
+                <i class="fas fa-arrow-right text-gray-600 my-2"></i>
             </div>
 
-            <section>
+            <div>
                 <article class="pt-2 pb-6">
                     <h3 class="text-gray-800/90 font-bold">Anotace kurzu: </h3>
                     <p id="anotace"></p>
@@ -69,8 +70,8 @@
                     <h3 class="text-gray-800/90 font-bold">Rámcový obsah kurzu: </h3>
                     <p id="obsah"></p>
                 </article>
-            </section>
-            <button id="back-btn" class="text-gray-700"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2 mt-4"></i>Zpět</a></button>
+            </div>
+            <button class="text-gray-700 mt-4" onclick="window.history.back()"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2 mt-4"></i>Zpět</button>
         </main>
     </div>
 

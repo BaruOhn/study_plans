@@ -2,10 +2,10 @@ const fs = require('fs').promises;
 const path = require('path');
 const axios = require('axios');
 
-const subjectsDirPath = path.join(__dirname, '..', 'data', 'PRF', 'predmety');
-const studyPlansDirPath = path.join(__dirname, '..', 'data', 'PRF', 'studijni_plany');
+const subjectsDirPath = path.join(__dirname, '..', 'data', 'PRF', 'subjects');
+const studyPlansDirPath = path.join(__dirname, '..', 'data', 'PRF', 'study_plans');
 
-// Načtení data o předmětech a uloží je do souboru
+// Načte a uloží data předmětů
 async function fetchSubjectData() {
   try {
     const studyPlansFiles = await fs.readdir(studyPlansDirPath);
@@ -27,7 +27,6 @@ async function fetchSubjectData() {
         const subjectData = response.data;
         const subjectFilePath = path.join(subjectsDirPath, `${katedra}_${zkratka}.json`);
 
-        // Uložení dat předmětu
         await fs.writeFile(subjectFilePath, JSON.stringify(subjectData, null, 2), 'utf8');
 
         console.log(`Data pro předmět ${katedra}/${zkratka} byla uložena.`);

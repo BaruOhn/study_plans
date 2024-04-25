@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const express = require('express');
 const fs = require('fs').promises;
 const cron = require('node-cron');
@@ -18,15 +18,15 @@ const fetchSubjectData = require('./server/scripts/load_subjects_data');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Asynchronní načtení uživatelů při spuštění serveru
+// Načtení uživatelů při spuštění serveru
 let users = [];
-fs.readFile('server/data/PRF/uzivatele.json', 'utf8')
-  .then(data => {
-    users = JSON.parse(data);
-  })
-  .catch(err => {
-    console.error('Chyba při načítání souboru uzivatele.json:', err);
-  });
+fs.readFile('server/data/PRF/users.json', 'utf8')
+    .then(data => {
+        users = JSON.parse(data);
+    })
+    .catch(err => {
+        console.error('Chyba při načítání souboru uzivatele.json:', err);
+    });
 
 // Načtení dat studijních programů v 00:00 každý den
 cron.schedule('0 0 * * *', async () => {
@@ -84,7 +84,6 @@ cron.schedule('0 3 * * *', async () => {
     timezone: 'Europe/Prague'
 });
 
-
 // Nastavení cesty pro statické soubory
 app.use(express.static(path.join(__dirname, 'client')));
 
@@ -93,7 +92,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'client/index.html'));
 });
 
-// Endpoint pro získání data poslední aktualizace
+// Endpoint pro získání data poslední aktualizace dat
 app.get('/last-update', (req, res) => {
     res.json({ lastUpdate: lastUpdateDate });
 });
@@ -101,25 +100,24 @@ app.get('/last-update', (req, res) => {
 // Endpoint pro přihlášení
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
-    console.log("Přijatý email a heslo:", email, password);
 
     // Hledání uživatele
     const user = users.find(u => u.email === email);
     if (!user) {
-        return res.status(401).json({ message: "Neplatné přihlašovací údaje" });
+        return res.status(401).json({ message: "Neplatné přihlašovací údaje." });
     }
 
     // Porovnání hesel
-    bcrypt.compare(password, user.password, function(err, isMatch) {
+    bcrypt.compare(password, user.password, function (err, isMatch) {
         if (err) {
             console.error("Chyba při ověřování hesla:", err);
-            return res.status(500).json({ message: "Interní chyba serveru" });
+            return res.status(500).json({ message: "Interní chyba serveru." });
         }
         if (isMatch) {
             const { password, ...userWithoutPassword } = user;
             res.json({ user: userWithoutPassword });
         } else {
-            res.status(401).json({ message: "Neplatné přihlašovací údaje" });
+            res.status(401).json({ message: "Neplatné přihlašovací údaje." });
         }
     });
 });
@@ -129,7 +127,7 @@ app.get('/data/:faculty/:faculty_studijni_programy.json', (req, res) => {
     const facultyParam = req.params.faculty_studijni_programy.split('_')[0];
 
     if (!facultyParam) {
-        return res.status(400).send('Faculty parameter is missing in the request');
+        return res.status(400).send('Chybějící parametr fakulta.');
     }
 
     const faculty = facultyParam.toUpperCase();
@@ -143,10 +141,10 @@ app.get('/data/:faculty/:faculty_studijni_programy.json', (req, res) => {
 });
 
 // Endpoint pro získání detailů studijního programu
-app.get('/data/:faculty/obory/:stprIdno', (req, res) => {
+app.get('/data/:faculty/programs/:stprIdno', (req, res) => {
     const faculty = req.params.faculty;
     const stprIdno = req.params.stprIdno;
-    const filePath = path.join(__dirname, `server/data/${faculty}/obory`, `${stprIdno}_obory.json`);
+    const filePath = path.join(__dirname, `server/data/${faculty}/programs`, `${stprIdno}_obory.json`);
 
     res.sendFile(filePath, function (err) {
         if (err) {
@@ -156,10 +154,10 @@ app.get('/data/:faculty/obory/:stprIdno', (req, res) => {
 });
 
 // Endpoint pro získání studijního plánu
-app.get('/data/:faculty/studijni_plany/:oborIdno', (req, res) => {
+app.get('/data/:faculty/study_plans/:oborIdno', (req, res) => {
     const faculty = req.params.faculty;
     const oborIdno = req.params.oborIdno;
-    const filePath = path.join(__dirname, `server/data/${faculty}/studijni_plany`, `${oborIdno}_studijni_plan.json`);
+    const filePath = path.join(__dirname, `server/data/${faculty}/study_plans`, `${oborIdno}_studijni_plan.json`);
 
     res.sendFile(filePath, function (err) {
         if (err) {
@@ -169,11 +167,11 @@ app.get('/data/:faculty/studijni_plany/:oborIdno', (req, res) => {
 });
 
 // Endpoint pro zobrazení detailu předmětu
-app.get('/data/:faculty/predmety/:department/:acronym', (req, res) => {
+app.get('/data/:faculty/subjects/:department/:acronym', (req, res) => {
     const department = req.params.department;
     const acronym = req.params.acronym;
     const faculty = req.params.faculty;
-    const filePath = path.join(__dirname, `server/data/${faculty}/predmety`, `${department}_${acronym}.json`);
+    const filePath = path.join(__dirname, `server/data/${faculty}/subjects`, `${department}_${acronym}.json`);
 
     res.sendFile(filePath, function (err) {
         if (err) {
@@ -187,13 +185,13 @@ app.get('/generate_pdf', async (req, res) => {
     const { oborIdno, faculty, stprIdno } = req.query;
 
     if (!oborIdno || !faculty || !stprIdno) {
-        return res.status(400).send('Chybějící parametry.');
+        return res.status(400).send('Chybějící parametry v URL.');
     }
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        executablePath: '/usr/bin/chromium-browser'
+    })
     const page = await browser.newPage();
-
-    // Sestavení URL s potřebnými parametry
     const url = `http://localhost:3000/study_plan.html?oborIdno=${oborIdno}&faculty=${faculty}&stprIdno=${stprIdno}`;
 
     try {
@@ -211,7 +209,7 @@ app.get('/generate_pdf', async (req, res) => {
     }
 });
 
-// GET endpoint pro získání preferencí
+// GET endpoint pro získání preferencí programů
 app.get('/get_program_preferences', async (req, res) => {
     const filePath = path.join(__dirname, `server/data/${faculty}`, `program_preferences.json`);
 
@@ -224,10 +222,10 @@ app.get('/get_program_preferences', async (req, res) => {
     }
 });
 
-// POST endpoint pro uložení preferencí
+// POST endpoint pro uložení preferencí programů
 app.post('/save_program_preferences', async (req, res) => {
     const filePath = path.join(__dirname, `server/data/${faculty}`, `program_preferences.json`);
-    const newData = req.body; 
+    const newData = req.body;
 
     try {
         let existingData;
@@ -239,7 +237,7 @@ app.post('/save_program_preferences', async (req, res) => {
         }
 
         existingData[newData.stprIdno] = newData.preference;
-        
+
         await fs.writeFile(filePath, JSON.stringify(existingData, null, 2));
         res.json({ message: 'Preference programů byly úspěšně uloženy.' });
     } catch (err) {
@@ -268,7 +266,7 @@ app.get('/get_subject_preferences', async (req, res) => {
 app.post('/save_subject_preferences', async (req, res) => {
     const { department, acronym, preference, stprIdno, faculty } = req.body;
     const filePath = path.join(__dirname, `server/data/${faculty}/subject_preferences`, `${stprIdno}_subject_preferences.json`);
-    const subjectId = `${department}_${acronym}`; // Vytvoření jedinečného identifikátoru
+    const subjectId = `${department}_${acronym}`;
 
     try {
         let existingData;
@@ -283,7 +281,7 @@ app.post('/save_subject_preferences', async (req, res) => {
             }
         }
         existingData[subjectId] = preference;
-        
+
         await fs.writeFile(filePath, JSON.stringify(existingData, null, 2), 'utf8');
         res.json({ message: 'Preference předmětů byly úspěšně uloženy pro program ${stprIdno}.' });
     } catch (err) {
@@ -302,12 +300,12 @@ app.get('/get_study_plan_description', async (req, res) => {
         res.json(JSON.parse(data));
     } catch (err) {
         if (err.code === 'ENOENT') {
-            const defaultDescription = {}; 
+            const defaultDescription = {};
             await fs.writeFile(filePath, JSON.stringify(defaultDescription), 'utf8');
             res.json(defaultDescription);
         } else {
             console.error(err);
-            res.status(500).send('Error loading study plan description.');
+            res.status(500).send('Chyba při načítání popisu studijního plánu.');
         }
     }
 });
@@ -331,7 +329,7 @@ app.post('/save_study_plan_description', async (req, res) => {
             }
         }
         existingDescription.description = description;
-        
+
         await fs.writeFile(filePath, JSON.stringify(existingDescription, null, 2), 'utf8');
         res.json({ message: 'Popis studijního plánu byl úspěšně uložen.' });
     } catch (err) {

@@ -11,41 +11,45 @@
 </head>
 
 <body class="bg-bg-gray-light">
-    <div style="background-image: linear-gradient(rgba(3, 105, 161, 0.9), rgba(14, 165, 233, 0.8)), url('assets/image.png'); background-size: cover; background-position: center;">
+    <div style="background-image: linear-gradient(rgba(3, 105, 161, 0.9), rgba(14, 165, 233, 0.8)), url('assets/faculty.jpg'); background-size: cover; background-position: center;">
         <header class="px-4 py-6 md:px-8 md:py-8">
             <div class="flex justify-between items-center">
                 <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
                 <div class="flex items-center gap-6">
+
                     <!-- Tlačítko pro přihlášení/odhlášení -->
-                    <button id="auth-button" class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center"><a class="flex items-center"><i class="fas fa-user text-white mr-2"></i><span id="authText">Přihlásit se</span></a></button>
-                    <button id="auth-button-mobile" class="pl-6 xs:px-4 sm:px-6 md:hidden"><a><i class="fas fa-user text-white text-xl"></i></a></button>
+                    <button id="auth-button" class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center" aria-label="Přihlásit se"><i class="fas fa-user text-white mr-2"></i><span id="authText">Přihlásit se</span></button>
+                    <button id="auth-button-mobile" class="pl-6 xs:px-4 sm:px-6 md:hidden" aria-label="Přihlásit se"><i class="fas fa-user text-white text-xl" aria-hidden="true"></i></button>
+
                     <!-- O aplikaci -->
-                    <button class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center"><a href="about_app.html" class="flex items-center"><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</a></button>
-                    <button class="px-2 xs:px-4 sm:px-6 md:hidden"><a href="about_app.html"><i class="fas fa-info-circle text-white text-xl"></i></a></button>
+                    <button class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center" aria-label="O aplikaci" onclick="location.href='about_app.html';"><span><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</span></button>
+                    <button class="px-2 xs:px-4 sm:px-6 md:hidden" aria-label="O aplikaci" onclick="location.href='about_app.html';"><i class="fas fa-info-circle text-white text-xl"></i></button>   
                 </div>
             </div>
         </header>                
         
         <!-- Sekce pro vyhledávání -->
         <section>
-            <h4 id="userExample" class="text-white"></h4>
             <h2 class="text-white font-semibold text-center text-4xl md:text-5xl lg:text-6xl px-4 pt-16 pb-6 md:px-8 md:pt-20 md:pb-8 lg:pt-28 lg:pb-8">Přehled nabídky studia</h2>
             <div class="flex justify-center pb-10 px-4 lg:pb-16 sm:px-0">
+
+                <!-- Formulář pro vyhledávání studijních programů -->
                 <form id="search-form" class="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl relative">
                     <input id="search-input" type="search" name="search" placeholder="Vyhledat studijní program..." class="w-full rounded-3xl focus:outline-none px-6 py-4 pl-6 mb-4 sm:mb-0 sm:mr-4">
                     <i id="search-icon" class="fas fa-search bg-amber-500 rounded-3xl px-3 py-2 text-2xl text-white absolute top-0 right-0 mt-2 mr-2 cursor-pointer"></i>
-                    <div id="search-suggestions" class="text-gray-700 -mt-4 sm:mt-0 font-medium absolute w-full bg-white rounded-b-3xl shadow-xl hidden z-50">
-                        <!-- Dynamicky generované návrhy budou vloženy sem -->
-                    </div>
+
+                    <!-- Návrhy pro vyhledávání -->
+                    <div id="search-suggestions" class="text-gray-700 -mt-4 sm:mt-0 font-medium absolute w-full bg-white rounded-b-3xl shadow-xl hidden z-50"></div>
                 </form>                
             </div>
         </section>
 
        <!-- Sekce pro filtrování studijních programů -->
-        <section id="menu" class="flex flex-wrap space-x-2 xs:space-x-4 sm:space-x-7 justify-center px-4 pb-16 w-full md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto">
+        <div id="menu" class="flex flex-wrap space-x-2 xs:space-x-4 sm:space-x-7 justify-center px-4 pb-16 w-full md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto">
+
             <!-- Skupina filtrů podle typu studijního programu -->
             <div>
-                <span class="flex justify-center font-bold text-white mb-4 mt-2 sm:mt-0">Typ studia:</span>
+                <span class="flex justify-center font-bold text-white mb-2 mt-2 sm:mt-0">typ studia</span>
                 <div class="space-x-1 flex flex-wrap justify-center">
                     <button class="filter-btn-type bg-white rounded-3xl font-bold text-sky-700 px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="Bakalářský">bakalářské</button>
                     <button class="filter-btn-type bg-white rounded-3xl font-bold text-sky-700 px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="Navazující">navazující</button>
@@ -54,33 +58,33 @@
             </div>
             <!-- Skupina filtrů podle formy studia -->
             <div> 
-                <span class="flex justify-center font-bold text-white mb-4 mt-2 sm:mt-0">Forma studia:</span>
+                <span class="flex justify-center font-bold text-white mb-2 mt-2 sm:mt-0">forma studia</span>
                 <div class="space-x-1 flex flex-wrap justify-center">
                     <button class="filter-btn-form bg-white rounded-3xl font-bold text-sky-700 px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="Prezenční">prezenční</button>
-                    <button class="filter-btn-form bg-white rounded-3xl font-bold text-sky-700 px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="Kombinovaná">kombinované</button>
+                    <button class="filter-btn-form bg-white rounded-3xl font-bold text-sky-700 px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="Kombinovaná">kombinovaná</button>
                 </div>
             </div>
             <!-- Skupina filtrů podle jazyka výuky -->
             <div>
-                <span class="flex justify-center font-bold text-white mb-4 mt-2 sm:mt-0">Jazyk výuky:</span>
+                <span class="flex justify-center font-bold text-white mb-2 mt-2 sm:mt-0">studium v jazyce</span>
                 <div class="space-x-1 flex flex-wrap justify-center">
                         <button class="filter-btn-lang bg-white rounded-3xl font-bold text-sky-700 px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="Čeština">čeština</button>
                         <button class="filter-btn-lang bg-white rounded-3xl font-bold text-sky-700 px-3 py-2 md:px-4 md:py-3 mb-2" data-filter="Angličtina">angličtina</button>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
 
     <!-- Sekce pro zobrazení studijních programů -->
-    <section id="study-programs" class="w-full md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto mt-8 px-4">
-    </section>
+    <div id="study-programs" class="w-full md:max-w-4xl lg:max-w-6xl xl:max-w-7xl mx-auto mt-8 px-4">
+    </div>
 
     <footer class="text-center text-gray-400 px-7 pt-0 pb-8">
         <p id="last-update">Poslední aktualizace dat: </p>
     </footer>
+    
+    <script src="js/display_programs.js"></script>
+    <script src="js/last_data_update.js"></script>
 </body>
-
-<script src="js/display_programs.js"></script>
-<script src="js/last_data_update.js"></script>
 
 </html>

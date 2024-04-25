@@ -15,17 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Chyba při načítání detailu předmětu:', error);
     }
 
-    // Zde přidáme kód pro zpětné tlačítko
-    const backBtn = document.getElementById('back-btn');
-    backBtn.addEventListener('click', () => {
-        window.history.back();
-    });
-
-    const closeBtn = document.getElementById('close-btn');
-    closeBtn.addEventListener('click', () => {
-        window.history.back();
-    });
-
+    // Vizualizace tlačítka pro přihlášení/odhlášení
     const userData = JSON.parse(sessionStorage.getItem('userData'));
     const authButton = document.getElementById('auth-button');
     const authButtonMobile = document.getElementById('auth-button-mobile');
@@ -43,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function fetchSubjectDetail(department, acronym, faculty) {
-    const path = `/data/${faculty}/predmety/${department}/${acronym}`;
+    const path = `/data/${faculty}/subjects/${department}/${acronym}`;
     const response = await fetch(path);
     if (!response.ok) throw new Error('Chyba při načítání dat');
     return response.json();

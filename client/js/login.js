@@ -18,7 +18,6 @@ document.querySelector('form').addEventListener('submit', function(event) {
         }
     })
     .then(data => {
-        console.log('Přijatá data od serveru:', data);  // Kontrolní výpis přijatých dat
         if (data.user) {
             sessionStorage.setItem('userData', JSON.stringify(data.user));
             window.location.href = 'index.html';

@@ -7,7 +7,6 @@ async function fetchProgramDetails() {
   const faculty = 'PRF';
   const facultyDataPath = path.join(__dirname, '..', 'data', faculty, `${faculty}_studijni_programy.json`);
   try {
-    // Načtení dat studijních programů
     const data = JSON.parse(await fs.readFile(facultyDataPath, 'utf8'));
     for (const type in data) {
       for (const programName in data[type]) {
@@ -33,7 +32,7 @@ async function saveProgramDetails(faculty, stprIdno) {
     const apiUrl = `https://stagservices.upol.cz/ws/services/rest2/programy/getOboryStudijnihoProgramu?outputFormat=JSON&stprIdno=${stprIdno}`;
     const response = await axios.get(apiUrl);
     const details = response.data;
-    const detailsPath = path.join(__dirname, '..', 'data', faculty, 'obory', `${stprIdno}_obory.json`);
+    const detailsPath = path.join(__dirname, '..', 'data', faculty, 'programs', `${stprIdno}_obory.json`);
     await fs.writeFile(detailsPath, JSON.stringify(details, null, 2));
     console.log(`Data byla uložena pro program s ID: ${stprIdno}`);
   } catch (error) {

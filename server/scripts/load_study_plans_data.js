@@ -2,10 +2,10 @@ const fs = require('fs').promises;
 const path = require('path');
 const axios = require('axios');
 
-const programDetailsDirPath = path.join(__dirname, '..', 'data', 'PRF', 'obory');
-const studyPlansDirPath = path.join(__dirname, '..', 'data', 'PRF', 'studijni_plany');
+const programDetailsDirPath = path.join(__dirname, '..', 'data', 'PRF', 'programs');
+const studyPlansDirPath = path.join(__dirname, '..', 'data', 'PRF', 'study_plans');
 
-// Načtení a uložení dat studijních plánů
+// Načte a uloží data studijních plánů
 async function fetchStudyPlanData() {
   try {
     const files = await fs.readdir(programDetailsDirPath);
@@ -20,7 +20,6 @@ async function fetchStudyPlanData() {
         continue;
       }
 
-      // Zpracování dat pro každý obor
       for (const oborItem of obor.oborInfo) {
         if (!oborItem.oborIdno) {
           console.error(`oborIdno nebylo nalezeno pro obor: ${file}`);
@@ -32,14 +31,13 @@ async function fetchStudyPlanData() {
         const response = await axios.get(apiUrl);
         const savePath = path.join(studyPlansDirPath, `${oborIdno}_studijni_plan.json`);
 
-        // Uložení dat studijního plánu
         await fs.writeFile(savePath, JSON.stringify(response.data, null, 2), 'utf8');
 
         console.log(`Data byla uložena pro obor s ID: ${oborIdno}`);
       }
     }
   } catch (error) {
-    console.error(`Chyba při ukládání detailu programu pro program s ID: ${oborIdno}`, error);
+    console.error('Chyba při ukládání detailu programu:', error);
   }
 }
 
