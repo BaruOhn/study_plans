@@ -13,49 +13,54 @@
 <body class="font-sans flex flex-col min-h-screen">
     <div class="flex-grow">
         <header class="bg-sky-700 px-7 py-2 md:px-8 print:hidden">
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center xl:mx-auto max-w-[1200px]">
                 <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
                 <div class="flex items-center gap-4">
-                    <!-- Tlačítka pro přihlášení/odhlášení -->
-                    <button id="auth-button" class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center"><a class="flex items-center"><i id="authIcon" class="fas fa-user text-white mr-2"></i><span id="authText">Přihlásit se</span></a></button>
-                    <button id="auth-button-mobile" class="pl-6 xs:px-4 sm:px-6 md:hidden"><a><i class="fas fa-user text-white text-xl"></i></a></button>
+                    <!-- Tlačítko pro přihlášení/odhlášení -->
+                    <button id="auth-button" class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center" aria-label="Přihlásit se"><i class="fas fa-user text-white mr-2"></i><span id="authText">Přihlásit se</span></button>
+                    <button id="auth-button-mobile" class="pl-6 xs:px-4 sm:px-6 md:hidden" aria-label="Přihlásit se"><i class="fas fa-user text-white text-xl" aria-hidden="true"></i></button>
+
                     <!-- O aplikaci -->
-                    <button class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center"><a href="about_app.html" class="flex items-center"><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</a></button>
-                    <button class="px-2 xs:px-4 sm:px-6 md:hidden"><a href="about_app.html"><i class="fas fa-info-circle text-white text-xl"></i></a></button>
+                    <button class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center" aria-label="O aplikaci" onclick="location.href='about_app.html';"><span><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</span></button>
+                    <button class="px-2 xs:px-4 sm:px-6 md:hidden" aria-label="O aplikaci" onclick="location.href='about_app.html';"><i class="fas fa-info-circle text-white text-xl"></i></button>   
                 </div>
             </div>
         </header>       
         
         <!-- Sekce s hlavičkou programu a tlačítkem pro generování PDF souboru -->
-        <section class="mx-6 sm:mx-9 print:mx-6">
+        <div class="mx-4 xs:mx-6 sm:mx-9 print:mx-6 xl:mx-auto max-w-[1200px]">
             <div class="flex flex-wrap justify-between">
-                <div>
-                    <h2 class="text-sky-700 font-bold text-2xl mt-7 program-name print:text-xl"></h2>
-                    <span class="text-gray-500 program-type print:text-sm"></span>
+                <div class="ml-0.5 mr-4">
+                    <p id="program-name" class="text-sky-700 font-bold text-2xl mt-7 program-name print:text-xl"></p>
+                    <span id="program-type" class="text-gray-500 print:text-sm"></span>
                 </div>
                 <button id="download-pdf" class="text-gray-700 print:hidden mt-7 flex justify-center items-center">
                     <i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-file text-gray-700 mr-2" id="download-icon"></i>
-                    <div class="hidden animate-spin rounded-full border-2 border-bg-gray-light border-t-gray-500 h-6 w-6 -ml-10 mr-2" id="loading-icon"></div>Stáhnout PDF
-                </button>
+                    <span class="hidden animate-spin rounded-full border-2 border-bg-gray-light border-t-gray-500 h-6 w-6 -ml-10 mr-2" id="loading-icon"></span>
+                    <span>Stáhnout PDF</span>
+                </button>                  
             </div>
-            <h3 class="text-gray-700/95 font-bold text-xl mt-7 program-form print:text-base"></h3>
-        </section>
+            <button class="text-gray-700 mt-4 print:hidden" onclick="window.history.back()"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2 mt-4"></i>Zpět</button>
+            <p id="program-form" class="text-gray-700/95 font-bold text-xl mt-7 ml-0.5 print:text-base"></p>
+        </div>
 
         <!-- Sekce s předměty studijního plánu -->
-        <main class="mx-6 sm:mx-9 print:mx-6">
+        <main class="mx-4 xs:mx-6 sm:mx-9 print:mx-6 xl:mx-auto max-w-[1200px]">
             <div id="main-content" class="grid grid-cols-12 gap-4 print:gap-2"></div>
         </main>        
 
         <!-- Sekce s popisem programu -->
-        <div class="flex flex-col ml-6 sm:ml-9 mt-16 print:hidden">
-            <textarea id="description-text" class="w-72 xs:w-96 md:w-[600px] p-4 focus:outline-amber-500 border-2 border-gray-200 rounded-sm" style="display: none;"></textarea>
-            <p id="description-view" class="w-72 xs:w-96 md:w-[600px] p-4"></p>
-            <button id="description-button" onclick="saveDescription()" class="bg-amber-500/90 text-white font-bold h-12 w-28 p-3 mt-4 rounded-full transition-shadow hover:shadow-md hover:bg-amber-500" style="display: none;">Uložit</button>
-            <p id="saveMessage" class="text-green-500 font-bold mt-2 opacity-0 transition-opacity duration-1000 ease-out"></p> 
+        <div class="flex flex-col ml-4 mr-5 xs:ml-6 sm:mx-9 mt-8 print:hidden xl:mx-auto max-w-[1200px]">
+            <h3 id="description-heading" class="text-gray-700/95 font-medium text-lg mt-4 mb-2 ml-0.5 print:hidden">Popisek programu</h3>
+            <textarea id="description-text" class="w-full md:w-[600px] p-4 ml-0.5 focus:outline-amber-500 border-2 border-gray-200 rounded-sm" style="display: none;"></textarea>
+            <p id="description-view" class="w-80 xs:w-96 md:w-[600px] py-4 pr-4 ml-0.5"></p>
+            <p id="stag-link-container" class="print:hidden ml-0.5">Tento studijní plán je také možné zobrazit v univerzitním <a href="#" id="stag-link" class="text-sky-700 font-bold underline" style="display: none;">IS STAG</a>.</p>
+            <button id="description-button" onclick="saveDescription()" class="bg-amber-500/90 text-white font-bold h-12 w-28 p-3 -mt-4 ml-0.5 rounded-full transition-shadow hover:shadow-md hover:bg-amber-500" style="display: none;">Uložit</button>
+            <p id="save-message" class="font-bold mt-2 ml-0.5 opacity-0 transition-opacity duration-1000 ease-out"></p> 
         </div>
     </div>
 
-    <footer class="text-center text-gray-400 px-7 pt-0 pb-8 print:hidden">
+    <footer class="text-center text-gray-400 px-7 pt-0 pb-8 print:hidden xl:mx-auto max-w-[1200px]">
         <p id="last-update">Poslední aktualizace dat: </p>
     </footer>
 

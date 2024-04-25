@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   selectedFormFilters = JSON.parse(sessionStorage.getItem('selectedFormFilters')) || ["Prezenční"];
   selectedLangFilters = JSON.parse(sessionStorage.getItem('selectedLangFilters')) || ["Čeština"];
 
+  // Vizualizace tlačítka pro přihlášení/odhlášení
   const userData = JSON.parse(sessionStorage.getItem('userData'));
   const authButton = document.getElementById('auth-button');
   const authButtonMobile = document.getElementById('auth-button-mobile');
@@ -42,14 +43,14 @@ function setupSearchForm() {
 
   searchInput.addEventListener('input', () => {
     const inputText = searchInput.value;
-    displaySuggestions(inputText); // Zobrazí návrhy na základě textu vstupu
+    displaySuggestions(inputText); // Zobrazí návrhy na základě inputu
   });
 
   document.querySelector('#search-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const searchQuery = searchInput.value;
     saveFiltersToSessionStorage();
-    fetchProgramData('PRF', searchQuery);
+    fetchProgramData('PRF', searchQuery); // Načte data programů na základě zadaného dotazu
   });
 }
 
@@ -66,9 +67,9 @@ function setupSearchIconClick() {
 function setupFilterButtons(selector, selectedFilters) {
   document.querySelectorAll(selector).forEach(btn => {
     const filterValue = btn.getAttribute('data-filter');
-    toggleButtonActiveState(btn, selectedFilters.includes(filterValue));
+    toggleButtonActiveState(btn, selectedFilters.includes(filterValue));  
     btn.addEventListener('click', function () {
-      const filterIndex = selectedFilters.indexOf(filterValue);
+      const filterIndex = selectedFilters.indexOf(filterValue);           
       if (filterIndex > -1) {
         selectedFilters.splice(filterIndex, 1);
       } else {
@@ -91,20 +92,23 @@ function toggleButtonActiveState(button, isActive) {
     button.classList.remove('bg-amber-500', 'text-white');
     button.classList.add('bg-white', 'text-sky-700');
   }
+
+  loadPreferences();
 }
 
-// Načte data o studijních programech z JSON souboru a uloží je do proměnné allPrograms
+// Načte data o studijních programech a uloží je do proměnné allPrograms
 function fetchProgramData(faculty, searchQuery = '') {
   const filePath = `/data/${faculty}/${faculty}_studijni_programy.json`;
   fetch(filePath)
     .then(response => response.ok ? response.json() : Promise.reject(`HTTP error! status: ${response.status}`))
     .then(data => {
-      allPrograms = data; // Uložení načtených dat do proměnné allPrograms
+      allPrograms = data;
       displayProgramData(searchQuery ? filterPrograms(data, searchQuery) : data, faculty);
     })
     .catch(error => console.error('Chyba při načítání dat:', error));
 }
 
+// Zobrazí návrhy na základě zadaného textu
 function displaySuggestions(inputText) {
   const suggestionsContainer = document.querySelector('#search-suggestions');
   suggestionsContainer.innerHTML = '';
@@ -115,7 +119,7 @@ function displaySuggestions(inputText) {
   toggleInputStyle(inputText.length > 0);
 
   if (inputText.length > 0) {
-    // Filtruje programy podle typu programu
+    // Zobrazí pouze návrhy podle zvolených filtrů
     let filteredByType = {};
     selectedTypeFilters.forEach(type => {
       if (allPrograms[type]) {
@@ -129,6 +133,7 @@ function displaySuggestions(inputText) {
       filteredByFormAndLanguage[type] = filterProgramsByCriteria(filteredByFormAndLanguage[type], selectedLangFilters, 'jazyk');
     });
 
+    // Zobrazí pouze návrhy odpovídající zadanému textu
     const finalFilteredPrograms = filterPrograms(filteredByFormAndLanguage, inputText);
     Object.entries(finalFilteredPrograms).forEach(([programType, programs]) => {
       Object.entries(programs).forEach(([programName, programDetails]) => {
@@ -149,7 +154,6 @@ function displaySuggestions(inputText) {
         });
       });
     });
-    // Nastavuje vzhled vstupního pole na základě toho, zda jsou zobrazeny návrhy
     toggleInputStyle(hasSuggestions);
 
     // Pokud nebyly nalezeny žádné návrhy, zavřeme kontejner s návrhy
@@ -159,6 +163,7 @@ function displaySuggestions(inputText) {
   }
 }
 
+// Změní vzhled vstupního pole podle toho, zda se zobrazují návrhy
 function toggleInputStyle(showSuggestions) {
   const searchInput = document.querySelector('#search-input');
 
@@ -180,7 +185,7 @@ function filterPrograms(data, query) {
       const queryLowerCase = query.toLowerCase();
       const queryWords = queryLowerCase.split(' ');
 
-      // Pro dotazy o délce 4 znaky a méně použiju jednoduchou přímou shodu
+      // Pro dotazy o délce 4 znaky a méně použijeme jednoduchou přímou shodu
       if (query.length <= 4) {
         return nameWords.some(nameWord => nameWord.includes(queryLowerCase));
       }
@@ -214,7 +219,6 @@ function filterPrograms(data, query) {
   ]));
 }
 
-
 // Pomocná funkce pro výpočet Levenshteinovy vzdálenosti
 function getLevenshteinDistance(a, b) {
   const m = a.length;
@@ -244,12 +248,15 @@ function filterProgramsByCriteria(allPrograms, selectedFilters, criteriaKey) {
   Object.keys(allPrograms).forEach(programName => {
     const specificProgramDetails = allPrograms[programName];
     const programsMatchingCriteria = Object.entries(specificProgramDetails).filter(([programId, programDetails]) => {
+      // Pokud nejsou vybrány žádné filtry, zobrazíme všechny programy
       return selectedFilters.length === 0 || selectedFilters.includes(programDetails[criteriaKey]);
     }).reduce((filteredPrograms, [programId, programDetails]) => {
+      // Přidání programu do filtrovaného seznamu
       filteredPrograms[programId] = programDetails;
       return filteredPrograms;
     }, {});
 
+    // Pokud byly nalezeny programy odpovídající zvoleným filtrům, přidáme je do seznamu
     if (Object.keys(programsMatchingCriteria).length > 0) {
       programsAfterFiltering[programName] = programsMatchingCriteria;
     }
@@ -258,6 +265,7 @@ function filterProgramsByCriteria(allPrograms, selectedFilters, criteriaKey) {
   return programsAfterFiltering;
 }
 
+// Filtruje programy podle přihlášeného garanta
 function filterProgramsByGuarantor(allPrograms, guarantorFullName) {
   let filteredPrograms = {};
   const guarantorName = guarantorFullName.trim();
@@ -280,6 +288,7 @@ function filterProgramsByGuarantor(allPrograms, guarantorFullName) {
   return filteredPrograms;
 }
 
+// Filtruje programy podle zvolených preferencí pro nepřihlášené uživatele
 function filterProgramsForPublic(allPrograms) {
   let publicPrograms = {};
 
@@ -292,12 +301,11 @@ function filterProgramsForPublic(allPrograms) {
 
         // Kontrola, jestli je program povolen v preferences, nebo jestli preference pro program nejsou definovány
         if (programPreferences[programId] || programPreferences[programId] === undefined) {
-          // Pokud neexistuje objekt pro tento název programu, inicializujeme ho
+          // Pokud program nemá uvedenu preferenci, inicializujeme ji na true
           if (!publicPrograms[programType][programName]) {
             publicPrograms[programType][programName] = {};
           }
 
-          // Přidání programu do veřejně zobrazených programů
           publicPrograms[programType][programName][programId] = programDetails;
         }
       });
@@ -307,7 +315,7 @@ function filterProgramsForPublic(allPrograms) {
   return publicPrograms;
 }
 
-// Vyfiltruje a zobrazí programy podle zadaných filtrů a zavolá funkci pro vytvoření karet
+// Vyfiltruje a zobrazí programy podle zadaných filtrů a zavolá funkci pro vytvoření karet s programy
 function displayProgramData(data, faculty) {
   const userData = JSON.parse(sessionStorage.getItem('userData'));
   let filteredData;
@@ -317,24 +325,29 @@ function displayProgramData(data, faculty) {
 
   if (userData && userData.role === 'garant') {
     filteredData = filterProgramsByGuarantor(data, userData.jmeno);
+  } else if (userData && userData.role === 'admin') {
+    filteredData = data;
   } else {
     filteredData = filterProgramsForPublic(data);
   }
 
+  const atLeastOneFilterSelected = selectedTypeFilters.length > 0;
 
-  // Tady byla chyba, místo 'data' by mělo být 'filteredData' pro další zpracování
   ['Bakalářský', 'Navazující', 'Doktorský'].forEach(programType => {
     if (selectedTypeFilters.includes(programType)) {
-      let programData = filteredData[programType] || {}; // Zde by mělo být 'filteredData'
+      let programData = filteredData[programType] || {}; 
       let filteredByForm = filterProgramsByCriteria(programData, selectedFormFilters, 'forma');
       let filteredByLanguage = filterProgramsByCriteria(filteredByForm, selectedLangFilters, 'jazyk');
 
-      // Toto zůstává beze změn, protože filtruje už 'filteredData'
       if (Object.keys(filteredByLanguage).length > 0) {
         createCardForProgramType(programsContainer, filteredByLanguage, programType, faculty);
       } else {
         createCardForProgramType(programsContainer, {}, programType, faculty);
       }
+    }
+    // Pokud nebyl zvolen žádný typ programu, zobrazíme prázdnou kartu
+    else if (!atLeastOneFilterSelected) {
+      createCardForProgramType(programsContainer, {}, programType, faculty);
     }
   });
 }
@@ -364,6 +377,7 @@ function createCardForProgramType(container, programs, type, faculty) {
   if (table.querySelector('tbody tr') !== null) {
     header.className += ' bg-sky-700/90';
     body.appendChild(table);
+
   } else {
     header.className += ' bg-gray-400';
     const noProgramsMessage = document.createElement('p');
@@ -385,11 +399,11 @@ function createTableForPrograms(programs, faculty) {
   table.innerHTML = `
     <thead>
       <tr class="text-left">
-        <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3">Název</th>
-        <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3">Forma</th>
-        <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3 hidden md:table-cell">Garant</th>
-        <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3 hidden md:table-cell">Jazyk</th>
-        <th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3 max-w-20">Platný od</th>
+        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 sm:px-3">Název</th>
+        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 sm:px-3">Forma</th>
+        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 sm:px-3 hidden md:table-cell">Garant</th>
+        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 sm:px-3 hidden md:table-cell text-center">Jazyk</th>
+        <th class="text-gray-700 text-xs xs:text-base border-b font-bold px-2 py-3 sm:px-3 max-w-20 text-right">Platný od</th>
         ${userData ? '<th class="text-gray-700 text-xs sm:text-base border-b font-bold px-2 py-3 sm:px-3 max-w-20">Zobrazeno</th>' : ''}
       </tr>
     </thead>`;
@@ -397,15 +411,16 @@ function createTableForPrograms(programs, faculty) {
   Object.entries(programs).forEach(([programName, programGroup]) => {
     Object.entries(programGroup).forEach(([id, program]) => {
       const row = tbody.insertRow();
+      row.classList.add('text-xs', 'xs:text-base', 'border-b', 'border-gray-200', 'last:border-b-0');
       row.innerHTML = `
-        <td class="text-gray-700 text-xs sm:text-base border-b border-gray-200 px-2 py-3 sm:px-3 max-w-40 font-bold">${program.nazevCz || program.nazev}</td>
-        <td class="text-gray-600 text-xs sm:text-base border-b border-gray-200 px-2 py-3 sm:px-3 max-w-40">${program.forma}</td>
-        <td class="text-gray-600 text-xs sm:text-base border-b border-gray-200 px-2 py-3 sm:px-3 hidden max-w-40 md:table-cell">${program.garant || '-'}</td>
-        <td class="text-gray-600 text-xs sm:text-base border-b border-gray-200 px-2 py-3 sm:px-3 hidden max-w-40 md:table-cell">${program.jazyk}</td>
-        <td class="text-gray-600 text-xs sm:text-base border-b border-gray-200 px-2 py-3 sm:px-3 max-w-40 text-center xs:text-left">${program.platnyOd}</td>
+        <td class="text-gray-700 px-2 py-3 sm:px-3 max-w-40 font-bold">${program.nazevCz || program.nazev}</td>
+        <td class="text-gray-600 px-2 py-3 sm:px-3 max-w-40">${program.forma}</td>
+        <td class="text-gray-600 px-2 py-3 sm:px-3 hidden max-w-40 md:table-cell">${program.garant || '-'}</td>
+        <td class="text-gray-600 px-2 py-3 sm:px-3 hidden max-w-40 md:table-cell text-center">${program.jazyk}</td>
+        <td class="text-gray-600 px-2 py-3 sm:px-3 max-w-40 text-end">${program.platnyOd}</td>
 
         ${userData ? `
-        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 px-2 py-3 xs:px-3 max-w-20 text-center whitespace-nowrap font-medium">
+        <td class="text-gray-600 text-xs xs:text-base border-b border-gray-200 last:border-b-0 px-2 py-3 xs:px-3 max-w-20 text-center whitespace-nowrap font-medium">
           <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
             <input type="checkbox" name="toggle" id="toggle-${id}" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" checked />
             <label for="toggle-${id}" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
@@ -413,7 +428,8 @@ function createTableForPrograms(programs, faculty) {
         </td>` : ''}
         `;
       row.classList.add('hover:bg-gray-100', 'cursor-pointer');
-      // Přidání události kliknutí pouze na buňky mimo toggle, aby nebylo přesměrování způsobeno kliknutím na toggle
+
+      // Přidání události kliknutí pouze na buňky mimo toggle, aby se zabránilo dvojímu přesměrování
       row.querySelectorAll('td:not(:last-child)').forEach(cell => {
         cell.addEventListener('click', () => {
           window.location.href = `/program_detail.html?stprIdno=${id}&faculty=${faculty}`;
@@ -421,18 +437,17 @@ function createTableForPrograms(programs, faculty) {
       });
 
       if (userData) {
-        // Ošetření událostí pro změnu stavu tlačítka, pokud je uživatel přihlášen
         const toggle = row.querySelector('.toggle-checkbox');
         if (programPreferences && programPreferences[id] !== undefined) {
-          toggle.checked = programPreferences[id]; // Nastaví checked podle preferencí
+          toggle.checked = programPreferences[id]; // Nastavení stavu tlačítka podle uložené preference
         }
         updateToggleStyle(toggle);
         updateRowStyle(toggle);
 
         toggle.addEventListener('change', () => {
-          updateToggleStyle(toggle); // Aktualizace vizuálního stavu tlačítka
-          updateRowStyle(toggle); // Nově přidaná funkce pro aktualizaci stylu řádku
-          savePreference(id, toggle.checked); // Odeslání změněné preference
+          updateToggleStyle(toggle);            // Aktualizace vizuálního stavu tlačítka
+          updateRowStyle(toggle);               // Aktualizace vizuálního stavu řádku tabulky
+          savePreference(id, toggle.checked);   // Uložení preference na server
         });
       }
     });
@@ -474,13 +489,11 @@ function saveFiltersToSessionStorage() {
 
 // Funkce pro odeslání preference na server
 function savePreference(programId, preference) {
-  // Příprava dat k odeslání
   const data = {
     stprIdno: programId,
     preference: preference
   };
 
-  // Odeslání dat pomocí fetch API
   fetch('/save_program_preferences', {
     method: 'POST',
     headers: {
@@ -490,10 +503,10 @@ function savePreference(programId, preference) {
   })
     .then(response => response.json())
     .then(data => {
-      console.log('Success:', data);
+      console.log('Preference byla úspěšně uložena:', data);
     })
     .catch((error) => {
-      console.error('Error:', error);
+      console.error('Došlo k chybě při ukládání preference:', error);
     });
 }
 
@@ -509,7 +522,7 @@ function loadPreferences() {
       fetchProgramData('PRF', savedSearchQuery);
     })
     .catch((error) => {
-      console.error('Error loading preferences:', error);
+      console.error('Nepodařilo se načíst preference:', error);
     });
 }
 

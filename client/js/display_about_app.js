@@ -1,9 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    const backBtn = document.getElementById('back-btn');
-    backBtn.addEventListener('click', () => {
-        window.history.back();
-    });
-
+    // Vizualizace tlačítka pro přihlášení/odhlášení
     const userData = JSON.parse(sessionStorage.getItem('userData'));
     const authButton = document.getElementById('auth-button');
     const authButtonMobile = document.getElementById('auth-button-mobile');

@@ -16,8 +16,9 @@
         <div class="flex justify-between items-center">
             <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
             <div class="flex items-center gap-4">
-                <button class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center"><a href="about_app.html" class="flex items-center"><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</a></button>
-                <button class="px-2 xs:px-4 sm:px-6 md:hidden"><a href="about_app.html"><i class="fas fa-info-circle text-white text-xl"></i></a></button>
+               <!-- O aplikaci -->
+               <button class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center" aria-label="O aplikaci" onclick="location.href='about_app.html';"><span><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</span></button>
+               <button class="px-2 xs:px-4 sm:px-6 md:hidden" aria-label="O aplikaci" onclick="location.href='about_app.html';"><i class="fas fa-info-circle text-white text-xl"></i></button>   
             </div>
         </div>
     </header>
@@ -25,7 +26,7 @@
     <main class="flex justify-center items-center">
         <section class="mb-12">
             <h2 class="text-sky-700 font-bold text-3xl sm:text-4xl text-center mt-16 mb-8">Přihlásit se</h2>
-            <article class="bg-white p-8 rounded-2xl">
+            <div class="bg-white p-8 rounded-2xl">
                 <form action="index.html" method="post" class="flex flex-col">
                     <label for="email" class="text-gray-700 mb-2">E-mail</label>
                     <input type="email" id="email" name="email" placeholder="jan.novak@upol.cz" class="bg-bg-gray-light text-left w-60 sm:w-96 rounded-2xl px-5 py-3 mb-4 focus:outline-gray-400">
@@ -33,7 +34,7 @@
                     <input type="password" id="password" name="password" placeholder="Zadejte heslo.." class="bg-bg-gray-light text-left w-full rounded-2xl px-5 py-3 mb-4 focus:outline-gray-400">
                     <button type="submit" class="bg-sky-700 text-white font-bold rounded-full px-5 py-3 mt-8 hover:bg-sky-800">Přihlásit se<i class="fas fa-arrow-right ml-2"></i></button>
                 </form>
-            </article>
+            </div>
         </section>
     </main>
 

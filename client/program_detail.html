@@ -16,19 +16,20 @@
             <div class="flex justify-between items-center">
                 <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
                 <div class="flex items-center gap-4">
-                    <!-- Tlačítka pro přihlášení/odhlášení -->
-                    <button id="auth-button" class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center"><a class="flex items-center"><i id="authIcon" class="fas fa-user text-white mr-2"></i><span id="authText">Přihlásit se</span></a></button>
-                    <button id="auth-button-mobile" class="pl-6 xs:px-4 sm:px-6 md:hidden"><a><i class="fas fa-user text-white text-xl"></i></a></button>
-                    <!-- O aplikaci -->
-                    <button class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center"><a href="about_app.html" class="flex items-center"><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</a></button>
-                    <button class="px-2 xs:px-4 sm:px-6 md:hidden"><a href="about_app.html"><i class="fas fa-info-circle text-white text-xl"></i></a></button>
+                   <!-- Tlačítko pro přihlášení/odhlášení -->
+                   <button id="auth-button" class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center" aria-label="Přihlásit se"><i class="fas fa-user text-white mr-2"></i><span id="authText">Přihlásit se</span></button>
+                   <button id="auth-button-mobile" class="pl-6 xs:px-4 sm:px-6 md:hidden" aria-label="Přihlásit se"><i class="fas fa-user text-white text-xl" aria-hidden="true"></i></button>
+
+                   <!-- O aplikaci -->
+                   <button class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center" aria-label="O aplikaci" onclick="location.href='about_app.html';"><span><i class="fas fa-info-circle text-white mr-2"></i>O aplikaci</span></button>
+                   <button class="px-2 xs:px-4 sm:px-6 md:hidden" aria-label="O aplikaci" onclick="location.href='about_app.html';"><i class="fas fa-info-circle text-white text-xl"></i></button>   
                 </div>
             </div>
         </header>         
         
         <section id="obory-list" class="flex flex-col justify-center">
             <h2 class="text-gray-700 font-bold text-2xl text-center pt-12">Seznam programů</h2>
-            <button id="back-btn" class="text-gray-700 py-7"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2"></i>Zpět</a></button>
+            <button class="text-gray-700 mt-4 mb-6" onclick="window.history.back()"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2 mt-4"></i>Zpět</button>
             <div id="obor-seznam" class="flex flex-col items-center">
                 <!-- Dynamicky načtený seznam oborů se zobrazí zde -->
             </div>

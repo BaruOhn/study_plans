@@ -6,15 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (stprIdno && faculty) {
     fetchProgramDetail(faculty, stprIdno);
   } else {
-    console.error('Chyba: Chybějící parametry v URL.');
+    console.error('Chybějící parametry v URL.');
   }
 
-  // Zde přidáme kód pro zpětné tlačítko
-  const backBtn = document.getElementById('back-btn');
-  backBtn.addEventListener('click', () => {
-    window.history.back();
-  });
-
+  // Vizualizace tlačítka pro přihlášení/odhlášení
   const userData = JSON.parse(sessionStorage.getItem('userData'));
   const authButton = document.getElementById('auth-button');
   const authButtonMobile = document.getElementById('auth-button-mobile');
@@ -32,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function fetchProgramDetail(faculty, stprIdno) {
-  const filePath = `/data/${faculty}/obory/${stprIdno}`;
+  const filePath = `/data/${faculty}/programs/${stprIdno}`;
 
   fetch(filePath)
     .then(response => {
@@ -54,12 +49,11 @@ function displayData(data, faculty, stprIdno) {
 
   data.oborInfo.forEach(obor => {
     const card = document.createElement('a');
-    card.href = `study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}`; // Přidání odkazu na celou kartu
+    card.href = `study_plan.html?stprIdno=${stprIdno}&oborIdno=${obor.oborIdno}&faculty=${faculty}`; 
     card.className = 'border border-t-0 border-solid border-gray-300 rounded-t-none rounded-b mx-4 mb-8 p-4 sm:p-6 w-full max-w-xs xs:max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-6xl 2xl:max-w-7xl shadow-md hover:shadow-lg transition-shadow';
     card.addEventListener('mouseenter', () => { card.classList.add('shadow-lg') });
     card.addEventListener('mouseleave', () => { card.classList.remove('shadow-lg') });
 
-    // Create the card header
     const cardHeader = document.createElement('div');
     cardHeader.className = 'text-gray-700 text-lg m-2 font-bold text-center sm:text-left';
     cardHeader.innerHTML = `
@@ -67,7 +61,6 @@ function displayData(data, faculty, stprIdno) {
         <span class="text-sm text-gray-600">${obor.forma} forma</span>
     `;
 
-    // Create the card body
     const cardBody = document.createElement('div');
     cardBody.className = 'm-2 text-center sm:text-left';
     cardBody.innerHTML = `
@@ -78,11 +71,9 @@ function displayData(data, faculty, stprIdno) {
     const border = document.createElement('div');
     border.className = 'bg-sky-700/90 h-2 w-full max-w-xs xs:max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-6xl 2xl:max-w-7xl rounded-t rounded-b-none';
 
-    // Append the header, link and body to the card
     card.appendChild(cardHeader);
     card.appendChild(cardBody);
 
-    // Append the card to the list
     oborListUl.appendChild(border);
     oborListUl.appendChild(card);
   });

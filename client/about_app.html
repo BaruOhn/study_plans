@@ -15,14 +15,15 @@
         <div class="flex justify-between items-center">
             <a href="index.html"><img src="assets/logo.png" alt="Studijní plány" class="logo" width="260" height="130"></a>
             <div class="flex items-center gap-4">
-                <!-- Tlačítka pro přihlášení/odhlášení -->
-                <button id="auth-button" class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center"><a class="flex items-center"><i id="authIcon" class="fas fa-user text-white mr-2"></i><span id="authText">Přihlásit se</span></a></button>
-                <button id="auth-button-mobile" class="pl-6 xs:px-4 sm:px-6 md:hidden"><a><i class="fas fa-user text-white text-xl"></i></a></button>
+                
+               <!-- Tlačítko pro přihlášení/odhlášení -->
+               <button id="auth-button" class="text-white border-white border rounded-3xl px-4 py-2 hidden md:flex items-center" aria-label="Přihlásit se"><i class="fas fa-user text-white mr-2"></i><span id="authText">Přihlásit se</span></button>
+               <button id="auth-button-mobile" class="pl-6 xs:px-4 sm:px-6 md:hidden" aria-label="Přihlásit se"><i class="fas fa-user text-white text-xl" aria-hidden="true"></i></button>
             </div>
         </div>
     </header>         
 
-    <section class="flex-grow m-8">
+    <section class="flex-grow mx-4 my-8 sm:mx-8">
         <h2 class="text-sky-700 font-bold text-2xl mb-8">O aplikaci</h2>
         <div>
             <h3 class="text-gray-800/90 font-bold">Autor:</h3>
@@ -30,10 +31,10 @@
             <h3 class="text-gray-800/90 font-bold">Ve spolupráci s:</h3>
             <p class="mb-4">Katedra Informatiky, Univerzita Palackého v Olomouci</p>
             <h3 class="text-gray-800/90 font-bold">Popis:</h3>
-            <p>Aplikace vznikla v rámci bakalářské práce a slouží k vizualizaci studijních programů a jejich studijních plánů realizovaných na Univerzitě Palackého v Olomouci.</p>
+            <p>Aplikace vznikla v rámci bakalářské práce a slouží k vizualizaci studijních programů a jejich studijních plánů realizovaných na Přírodovědecké fakultě Univerzity Palackého v Olomouci.</p>
             <p>Data jsou získávána z API informačního systému STAG.</p>
         </div>
-        <button id="back-btn" class="text-gray-700 mt-4"><a href="#"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2 mt-4"></i>Zpět</a></button>
+        <button class="text-gray-700 mt-4" onclick="window.history.back()"><i class="bg-bg-gray-light px-3 py-2 rounded-xl fas fa-angle-left text-gray-700 mr-2 mt-4"></i>Zpět</button>
     </section>
 
     <footer class="text-center text-gray-400 px-7 pt-0 pb-8">

@@ -5,11 +5,11 @@ client/assets/.DS_Store
 /package-lock.json
 /package.json
 /postcss.config.js
-server/data/PRF/obory
-server/data/PRF/studijni_plany
-server/data/PRF/predmety
+server/data/PRF/programs
+server/data/PRF/study_plans
+server/data/PRF/subjects
 server/data/PRF/subject_preferences
 server/data/PRF/study_plan_description
 server/data/PRF/program_preferences.json
-server/data/PRF/uzivatele.json
+server/data/PRF/users.json
 server.js
