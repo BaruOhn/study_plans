@@ -12,17 +12,12 @@ Před spuštěním aplikace se ujistěte, že máte na svém systému nainstalov
 ### Instalace závislostí
 Přejděte do adresáře projektu a nainstalujte požadované balíčky npm pomocí následujícího příkazu:
 
-`
-npm install
-`
-
+` npm install`
 
 ### Lokálně
 Pro spuštění aplikace lokálně použijte následující příkaz:
 
-`
-npm start
-`
+` npm start `
 
 Aplikace bude dostupná na adrese http://localhost:3000.
 
@@ -36,28 +31,26 @@ Pro nasazení na vzdálený server postupujte následovně:
 5. Spusťte server pomocí npm start.
 6. Aplikace bude přístupná na adrese http://adresa_vašeho_serveru:3000.
 
+Pokud dojde k chybě při spuštění serveru, přejděte do adresáře projektu a přeinstalujte knihovnu bcrypt pomocí:
+` npm uninstall bcrypt `
+` npm install bcrypt ` 
+
 #### Závislosti pro Puppeteer (Ubuntu)
 
 Pokud nasazujete na Ubuntu server, budou potřeba další závislosti pro knihovnu Puppeteer (např. Chromium). Nainstalujte je pomocí:
 
-`
-sudo apt-get install -y chromium-browser
-`
+` sudo apt-get install -y chromium-browser `
 
 ## Dostupné skripty
 V adresáři projektu můžete spustit následující skripty:
 
 Sestavení CSS: Kompiluje Tailwind CSS pro produkční použití.
 
-`
-npm run build:css
-`
+` npm run build:css `
 
 Sledování CSS: Nepřetržitě kompiluje Tailwind CSS během vývoje.
 
-`
-npm run watch:css
-`
+` npm run watch:css `
 
 ## Testovací verze
 Pro testování je aplikace dostupná na následující adrese:
