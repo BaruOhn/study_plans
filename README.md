@@ -10,7 +10,7 @@ Pro vývoj a testování byly použity následující verze Node.js a npm:
 Před spuštěním aplikace se ujistěte, že máte na svém systému nainstalováno Node.js a npm. 
 
 ### Instalace závislostí
-Přejděte do adresáře projektu a nainstalujte požadované balíčky npm pomocí následujícího příkazu:
+Přejděte do adresáře projektu study_plans a nainstalujte požadované balíčky npm pomocí následujícího příkazu:
 
 ` npm install`
 
