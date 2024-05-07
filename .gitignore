@@ -12,4 +12,5 @@ server/data/PRF/subject_preferences
 server/data/PRF/study_plan_description
 server/data/PRF/program_preferences.json
 server/data/PRF/users.json
+server/data/PRF/PRF_studijni_programy.json
 server.js

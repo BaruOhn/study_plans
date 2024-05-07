@@ -340,5 +340,5 @@ app.post('/save_study_plan_description', async (req, res) => {
 
 // Spuštění serveru
 app.listen(port, () => {
-    console.log(`Server běží na http://localhost:${port}`);
+    console.log(`Server běží na http://adresa_vašeho_serveru:${port}`);
 });
