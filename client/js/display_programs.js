@@ -79,6 +79,7 @@ function setupFilterButtons(selector, selectedFilters) {
       const searchQuery = document.querySelector('#search-input').value;
       fetchProgramData('PRF', searchQuery);
       saveFiltersToSessionStorage();
+      loadPreferences();
     });
   });
 }
@@ -92,8 +93,6 @@ function toggleButtonActiveState(button, isActive) {
     button.classList.remove('bg-amber-500', 'text-white');
     button.classList.add('bg-white', 'text-sky-700');
   }
-
-  loadPreferences();
 }
 
 // Načte data o studijních programech a uloží je do proměnné allPrograms
@@ -315,7 +314,7 @@ function filterProgramsForPublic(allPrograms) {
   return publicPrograms;
 }
 
-// Vyfiltruje a zobrazí programy podle zadaných filtrů a zavolá funkci pro vytvoření karet s programy
+// Vyfiltruje a zobrazí programy podle zadaných filtrů, přidá karty s programy do DOM
 function displayProgramData(data, faculty) {
   const userData = JSON.parse(sessionStorage.getItem('userData'));
   let filteredData;
@@ -332,44 +331,53 @@ function displayProgramData(data, faculty) {
   }
 
   const atLeastOneFilterSelected = selectedTypeFilters.length > 0;
+  const cardsToAdd = [];
 
+  // Vytvoření karty pro každý typ programu
   ['Bakalářský', 'Navazující', 'Doktorský'].forEach(programType => {
     if (selectedTypeFilters.includes(programType)) {
-      let programData = filteredData[programType] || {}; 
+      let programData = filteredData[programType] || {};
       let filteredByForm = filterProgramsByCriteria(programData, selectedFormFilters, 'forma');
       let filteredByLanguage = filterProgramsByCriteria(filteredByForm, selectedLangFilters, 'jazyk');
 
       if (Object.keys(filteredByLanguage).length > 0) {
-        createCardForProgramType(programsContainer, filteredByLanguage, programType, faculty);
+        const card = createCardForProgramType(filteredByLanguage, programType, faculty);
+        cardsToAdd.push(card);
       } else {
-        createCardForProgramType(programsContainer, {}, programType, faculty);
+        const emptyCard = createCardForProgramType({}, programType, faculty);
+        cardsToAdd.push(emptyCard);
       }
-    }
-    // Pokud nebyl zvolen žádný typ programu, zobrazíme prázdnou kartu
-    else if (!atLeastOneFilterSelected) {
-      createCardForProgramType(programsContainer, {}, programType, faculty);
+    } else if (!atLeastOneFilterSelected) {
+      const emptyCard = createCardForProgramType({}, programType, faculty);
+      cardsToAdd.push(emptyCard);
     }
   });
+
+  // Přidání karet s programy do DOM  
+  const fragment = document.createDocumentFragment();
+  cardsToAdd.forEach(card => {
+    fragment.appendChild(card);
+  });
+  programsContainer.appendChild(fragment);
 }
 
 // Vytvoří kartu pro daný typ programu
-function createCardForProgramType(container, programs, type, faculty) {
+function createCardForProgramType(programs, type, faculty) {
   const typeMapping = {
     'Bakalářský': 'Bakalářské',
     'Navazující': 'Navazující',
     'Doktorský': 'Doktorské'
   };
 
+  const typeName = typeMapping[type] || type;
   const card = document.createElement('div');
   card.className = 'bg-white shadow-md rounded-lg overflow-hidden w-full mb-8 animate-pop-in';
-
+  
   const header = document.createElement('div');
   header.className = 'py-2 px-4';
 
   const body = document.createElement('div');
   body.className = 'p-4';
-
-  const typeName = typeMapping[type] || type;
   body.innerHTML = `<h3 class="text-lg xs:text-xl font-semibold text-gray-800 px-2 py-4">${typeName} programy</h3>`;
 
   const table = createTableForPrograms(programs, faculty);
@@ -377,7 +385,6 @@ function createCardForProgramType(container, programs, type, faculty) {
   if (table.querySelector('tbody tr') !== null) {
     header.className += ' bg-sky-700/90';
     body.appendChild(table);
-
   } else {
     header.className += ' bg-gray-400';
     const noProgramsMessage = document.createElement('p');
@@ -388,7 +395,7 @@ function createCardForProgramType(container, programs, type, faculty) {
 
   card.appendChild(header);
   card.appendChild(body);
-  container.appendChild(card);
+  return card;
 }
 
 // Vytvoří tabulku programů pro daný typ programu
